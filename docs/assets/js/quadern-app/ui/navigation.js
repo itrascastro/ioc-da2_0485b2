@@ -67,6 +67,11 @@
             this.app.modules.editor.refreshData();
           }
           break;
+        case 'import-export':
+          if (this.app.modules.importExport) {
+            this.app.modules.importExport.activate();
+          }
+          break;
       }
     },
 

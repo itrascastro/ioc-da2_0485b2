@@ -97,3 +97,50 @@ breadcrumb: false
         </div>
     </div>
 </div>
+
+<!-- Vista Import/Export -->
+<div id="import-export-view" class="view" role="tabpanel" aria-labelledby="import-export-btn">
+    <div class="import-export-container">
+        <!-- Capçalera -->
+        <div class="content-item">
+            <div class="section-header">
+                <h2><i class="bi bi-cloud-download"></i> Backup del Quadern</h2>
+                <p>Exporta les teves notes en format JSON per crear una còpia de seguretat o transferir-les a un altre equip.</p>
+            </div>
+        </div>
+
+        <!-- Informació de l'estat actual -->
+        <div class="content-item">
+            <div class="backup-stats">
+                <div class="stat-item">
+                    <i class="bi bi-journal-text"></i>
+                    <div class="stat-info">
+                        <span class="stat-number" id="export-notes-count">0</span>
+                        <span class="stat-label">Notes guardades</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="bi bi-calendar"></i>
+                    <div class="stat-info">
+                        <span class="stat-number" id="export-last-modified">Mai</span>
+                        <span class="stat-label">Última modificació</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botó d'exportació -->
+        <div class="content-item">
+            <div class="export-actions">
+                <button type="button" class="btn btn-primary export-btn" data-format="json" id="export-json-btn">
+                    <i class="bi bi-download"></i>
+                    Descarregar Backup JSON
+                </button>
+                <p class="help-text">
+                    El fitxer JSON conté totes les teves notes amb la seva informació completa. 
+                    Pots usar aquest fitxer per restaurar les notes en un altre navegador o equip.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -925,12 +925,16 @@
 
 
     _exportNotes() {
-      if (this.app && this.app.switchView) {
-        this.app.switchView('import-export');
+      // Exportació directa de JSON per backup
+      if (this.app && this.app.modules && this.app.modules.formatters) {
+        this.app.modules.formatters._exportJSON();
+      } else {
+        console.warn('Dashboard: Mòdul formatters no disponible per exportació');
       }
     },
 
     _importNotes() {
+      // Per ara navegar a la vista per veure informació de backup
       if (this.app && this.app.switchView) {
         this.app.switchView('import-export');
       }

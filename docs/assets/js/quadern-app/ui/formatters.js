@@ -39,14 +39,22 @@
     async _exportJSON() {
       if (window.Quadern && window.Quadern.Store) {
         const state = window.Quadern.Store.load();
+        const notes = Object.values(state.notes.byId || {});
+        
         const data = {
           exportDate: new Date().toISOString(),
           version: '2.0',
-          notes: Object.values(state.notes.byId || {})
+          totalNotes: notes.length,
+          courseInfo: window.siteConfig || {},
+          notes: notes
         };
         
-        this._download('quadern-notes.json', JSON.stringify(data, null, 2));
-        this._showToast('Notes exportades en format JSON', 'success');
+        // Nom del fitxer amb data
+        const dateString = new Date().toISOString().slice(0,10);
+        const filename = `quadern-backup-${dateString}.json`;
+        
+        this._download(filename, JSON.stringify(data, null, 2));
+        this._showToast(`Backup descarregat: ${notes.length} notes exportades`, 'success');
       }
     },
 

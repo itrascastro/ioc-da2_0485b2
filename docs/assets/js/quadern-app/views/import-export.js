@@ -16,43 +16,16 @@
       console.log('✅ ImportExport: Vista inicialitzada');
     },
 
-    _bindEvents() {
-      // Upload area
-      const uploadArea = document.getElementById('upload-area');
-      const fileInput = document.getElementById('import-file');
-      
-      if (uploadArea && fileInput) {
-        uploadArea.addEventListener('click', () => fileInput.click());
-        
-        uploadArea.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          uploadArea.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-          uploadArea.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-          e.preventDefault();
-          uploadArea.classList.remove('dragover');
-          const files = e.dataTransfer.files;
-          if (files.length > 0) {
-            this._handleFileImport(files[0]);
-          }
-        });
-        
-        fileInput.addEventListener('change', (e) => {
-          if (e.target.files.length > 0) {
-            this._handleFileImport(e.target.files[0]);
-          }
-        });
-      }
+    activate() {
+      console.log('📤 ImportExport: Activant vista import/export...');
+      this.refreshData();
+    },
 
-      // Botó d'importar
-      const importBtn = document.getElementById('import-btn');
-      if (importBtn) {
-        importBtn.addEventListener('click', () => this._processImport());
+    _bindEvents() {
+      // Botó d'exportació JSON
+      const exportJsonBtn = document.getElementById('export-json-btn');
+      if (exportJsonBtn) {
+        exportJsonBtn.addEventListener('click', () => this._exportJSON());
       }
     },
 
@@ -67,7 +40,39 @@
     },
 
     refreshData() {
-      // Actualitzar estadístiques d'exportació
+      this._updateExportStats();
+    },
+
+    _updateExportStats() {
+      if (window.Quadern && window.Quadern.Store) {
+        const state = window.Quadern.Store.load();
+        const notes = Object.values(state.notes.byId || {});
+        
+        // Actualitzar número de notes
+        const notesCountEl = document.getElementById('export-notes-count');
+        if (notesCountEl) {
+          notesCountEl.textContent = notes.length.toString();
+        }
+        
+        // Actualitzar última modificació
+        const lastModifiedEl = document.getElementById('export-last-modified');
+        if (lastModifiedEl && notes.length > 0) {
+          const lastModified = notes.reduce((latest, note) => {
+            const noteDate = new Date(note.updatedAt || note.createdAt);
+            return noteDate > latest ? noteDate : latest;
+          }, new Date(0));
+          
+          lastModifiedEl.textContent = lastModified.toLocaleDateString('ca-ES');
+        }
+      }
+    },
+
+    _exportJSON() {
+      if (this.app && this.app.modules && this.app.modules.formatters) {
+        this.app.modules.formatters._exportJSON();
+      } else {
+        console.warn('ImportExport: Mòdul formatters no disponible');
+      }
     }
   };
 
