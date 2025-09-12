@@ -1,0 +1,303 @@
+---
+layout: bloc
+title: "Bloc 1: Conceptes bàsics d'E/S per consola"
+description: "Introducció a l'entrada/sortida en Java per consola amb Scanner i System.out"
+keywords: "Java, E/S, consola, Scanner, System.out, printf"
+unitat: 5
+bloc: 1
+bloc_numero: 1
+---
+
+<!--
+  Pàgina de contingut del Bloc 1 (Unitat 5)
+  Contingut extret del PDF: U5 - Nucli 1_ Conceptes basics dES per consola.pdf
+-->
+
+<div class="section">
+    <h2 id="Unitat5_Bloc1_Seccio1">Introducció a l'Entrada/Sortida (E/S) en Java</h2>
+    
+    <p>L'entrada/sortida (E/S) en Java permet als programes comunicar-se amb l'usuari a través de la consola. Això inclou la lectura de dades introduïdes per l'usuari i la seva visualització per pantalla.</p>
+
+    {% include info_box.html
+       contingut="Les funcions principals d'E/S en Java són:<br>
+       • <code>System.out.println()</code> i <code>System.out.print()</code> per mostrar informació.<br>
+       • La classe <code>Scanner</code> per llegir dades des del teclat."
+    %}
+
+    {% include prompt-ai.html
+       contingut="Explica'm les diferències entre entrada/sortida per consola en Java i altres llenguatges de programació com Python o C++. Vull entendre els avantatges i inconvenients de cada enfocament."
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc1_Seccio2">Operacions Bàsiques d'E/S</h2>
+    
+    <h3>Sortida de Dades per Pantalla</h3>
+    
+    <p>Per imprimir informació a la consola, podem utilitzar:</p>
+
+    {% capture code_sortida %}
+System.out.println("Hola, món!"); // Salta de línia automàticament
+System.out.print("Aquest text no canvia de línia.");
+System.out.println(" Aquest sí."); // Ara sí que canvia de línia
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_sortida %}
+
+    <h3>Entrada de Dades des del Teclat</h3>
+    
+    <p>Per llegir informació de l'usuari, utilitzem la classe Scanner:</p>
+
+    {% capture code_entrada %}
+import java.util.Scanner;
+
+public class EntradaDades {
+    public static void main(String[] args) {
+        Scanner teclat = new Scanner(System.in);
+        
+        System.out.print("Introdueix el teu nom: ");
+        String nom = teclat.nextLine();
+        
+        System.out.print("Introdueix la teva edat: ");
+        int edat = teclat.nextInt();
+        
+        System.out.println("Hola, " + nom + ". Tens " + edat + " anys.");
+        
+        teclat.close();
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_entrada %}
+
+    {% include definicio.html terme="Buffer d'Entrada" definicio="Zona de memòria temporal on es guarden les dades llegides de l'entrada abans de ser processades pel programa. En Scanner, és la causa del problema amb nextLine() després de nextInt()." %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc1_Seccio3">Formatatge Bàsic de la Sortida</h2>
+    
+    <h3>Ús de printf()</h3>
+    
+    <p>La funció printf() permet formatar números i cadenes de text:</p>
+
+    {% capture code_printf %}
+System.out.printf("Nom: %s | Edat: %d | Alçada: %.2f metres\n", "Pau", 25, 1.75);
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_printf %}
+
+    {% include definicio.html terme="Especificadors de Format" definicio="Codis especials que s'utilitzen en printf() per indicar com s'ha de formatar cada valor: %s per strings, %d per enters, %f per decimals, %.2f per decimals amb 2 xifres." %}
+
+    <p><strong>Significat dels especificadors:</strong></p>
+
+    <p>Exemple amb format numèric:</p>
+
+    {% capture code_format_numeric %}
+double preu = 1234.56789;
+System.out.printf("Preu amb format: %.2f€\n", preu);
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_format_numeric %}
+
+    <h3>Ús de String.format()</h3>
+    
+    <p>String.format() permet emmagatzemar la cadena formatada en una variable:</p>
+
+    {% capture code_string_format %}
+String missatge = String.format("El valor és %.3f", 12.34567);
+System.out.println(missatge);
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_string_format %}
+
+    {% include prompt-ai.html
+       contingut="Crea'm 5 exemples pràctics d'ús de printf() en Java per formatar diferents tipus de dades: números amb decimals, percentatges, dates, moneda i text alineat. Inclou explicacions de cada especificador utilitzat."
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc1_Seccio4">Llibreries i Mètodes Específics per a E/S</h2>
+    
+    <h3>Classes i Mètodes Importants</h3>
+    
+    <p>Java proporciona diverses llibreries per gestionar E/S:</p>
+    
+    <ul>
+        <li><code>java.util.Scanner</code> per llegir des de la consola.</li>
+        <li><code>System.out</code> per imprimir a la consola.</li>
+    </ul>
+
+    <h3>Mètodes més comuns de Scanner</h3>
+    
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Mètode</th>
+                <th>Descripció</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>nextLine()</code></td>
+                <td>Llegeix una línia de text</td>
+            </tr>
+            <tr>
+                <td><code>nextInt()</code></td>
+                <td>Llegeix un enter</td>
+            </tr>
+            <tr>
+                <td><code>nextDouble()</code></td>
+                <td>Llegeix un número decimal</td>
+            </tr>
+            <tr>
+                <td><code>nextBoolean()</code></td>
+                <td>Llegeix un booleà (true o false)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% include definicio.html terme="Parsing" definicio="Procés de convertir una cadena de text en un tipus de dada específic. Per exemple, Integer.parseInt() converteix un String en un int." %}
+
+    <p>Exemple combinant entrada de diferents tipus:</p>
+
+    {% capture code_exemple_complet %}
+import java.util.Scanner;
+
+public class ExempleScanner {
+    public static void main(String[] args) {
+        Scanner teclat = new Scanner(System.in);
+        
+        System.out.print("Introdueix un número enter: ");
+        int numEnter = teclat.nextInt();
+        
+        System.out.print("Introdueix un número decimal: ");
+        double numDecimal = teclat.nextDouble();
+        
+        System.out.print("És cert? (true/false): ");
+        boolean cert = teclat.nextBoolean();
+        
+        System.out.println("Has introduït: " + numEnter + ", " + numDecimal + 
+                          " i " + cert);
+        
+        teclat.close();
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_exemple_complet %}
+
+    <h3>Problema comú: nextLine() després de llegir números</h3>
+    
+    <p>Un dels problemes més freqüents quan s'utilitza Scanner és que <code>nextLine()</code> es salta quan s'usa després de mètodes com <code>nextInt()</code> o <code>nextDouble()</code>.</p>
+
+    {% include warning_box.html
+       contingut="<strong>Problema:</strong> Quan utilitzem <code>nextInt()</code> seguit de <code>nextLine()</code>, el <code>nextLine()</code> pot retornar una cadena buida perquè queda un caràcter de salt de línia al buffer d'entrada."
+    %}
+
+    <p><strong>Exemple del problema:</strong></p>
+
+    {% capture code_problema %}
+import java.util.Scanner;
+
+public class ProblemaScanner {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Quina edat tens? ");
+        int edat = scanner.nextInt(); // Deixa el caràcter '\n' al buffer
+        
+        System.out.print("Quin és el teu nom? ");
+        String nom = scanner.nextLine(); // Agafa el '\n' i retorna cadena buida!
+        
+        System.out.println("Nom: [" + nom + "]"); // Mostra: Nom: []
+        
+        scanner.close();
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_problema %}
+
+    <p><strong>Solució 1: Netejar el buffer</strong></p>
+    
+    <p>Afegir un <code>nextLine()</code> extra després de llegir el número:</p>
+
+    {% capture code_solucio1 %}
+import java.util.Scanner;
+
+public class SolucioBuffer {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Quina edat tens? ");
+        int edat = scanner.nextInt();
+        scanner.nextLine(); // Neteja el buffer del caràcter '\n'
+        
+        System.out.print("Quin és el teu nom? ");
+        String nom = scanner.nextLine(); // Ara funciona correctament
+        
+        System.out.println("Hola " + nom + ", tens " + edat + " anys.");
+        
+        scanner.close();
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_solucio1 %}
+
+    <p><strong>Solució 2: Llegir tot com a String i parsejar</strong></p>
+    
+    <p>Utilitzar sempre <code>nextLine()</code> i convertir amb <code>Integer.parseInt()</code>:</p>
+
+    {% capture code_solucio2 %}
+import java.util.Scanner;
+
+public class SolucioString {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Quina edat tens? ");
+        int edat = Integer.parseInt(scanner.nextLine());
+        
+        System.out.print("Quin és el teu nom? ");
+        String nom = scanner.nextLine();
+        
+        System.out.println("Hola " + nom + ", tens " + edat + " anys.");
+        
+        scanner.close();
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_solucio2 %}
+
+    {% include success_box.html
+       contingut="<strong>Recomanació:</strong> La <strong>Solució 2</strong> és més neta i consistent, especialment en programes grans, ja que evita haver de recordar netejar el buffer cada vegada."
+    %}
+
+    {% include prompt-ai.html
+       contingut="Explica'm en detall per què es produeix el problema del buffer amb nextLine() en Java. Vull entendre què passa internament i si hi ha altres situacions similars que cal tenir en compte amb Scanner."
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc1_Seccio5">Pràctiques</h2>
+    
+    <p>A continuació, es proposen alguns exercicis per reforçar els conceptes apresos.</p>
+
+    {% include exercici.html 
+       nom="Lectura des del teclat"
+       dificultat="Fàcil"
+       temps="10 min"
+       descripcio="<p>Escriu un programa que demani a l'usuari el seu nom, cognom i edat i després mostri aquesta informació en una línia.</p>"
+    %}
+
+    {% include exercici.html 
+       nom="Formatatge de la sortida"
+       dificultat="Fàcil"
+       temps="15 min"
+       descripcio="<p>Escriu un programa que llegeixi el preu d'un producte i la quantitat comprada i mostri el total a pagar amb només dues xifres decimals.</p>"
+    %}
+
+    {% include exercici.html 
+       nom="Ús de printf()"
+       dificultat="Mitjà"
+       temps="20 min"
+       descripcio="<p>Fes un programa que demani a l'usuari un número i mostri la seva taula de multiplicar utilitzant <code>printf()</code>.</p>"
+    %}
+
+    {% include prompt-ai.html
+       contingut="Per millorar els exercicis: quin patró puc seguir per validar entrada d'usuari de manera consistent? Com puc fer que el meu programa sigui més robust davant d'entrades inesperades sense utilitzar try-catch?"
+    %}
+</div>

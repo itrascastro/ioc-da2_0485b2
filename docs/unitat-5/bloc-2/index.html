@@ -1,0 +1,338 @@
+---
+layout: bloc
+title: "Bloc 2: E/S basada en fitxers"
+description: "Lectura, escriptura i gestió de fitxers en Java amb fluxos, excepcions i objectes"
+keywords: "Java, fitxers, FileReader, FileWriter, BufferedReader, IOException, arrays, objectes"
+unitat: 5
+bloc: 2
+bloc_numero: 2
+---
+
+<!--
+  Pàgina de contingut del Bloc 2 (Unitat 5)
+  Contingut extret del PDF: U5 - Nucli 2_ ES basada en fitxers.pdf
+-->
+
+<div class="section">
+    <h2 id="Unitat5_Bloc2_Seccio1">Conceptes Bàsics d'E/S amb Fitxers</h2>
+    
+    <p>En aquest material aprendrem a treballar amb fitxers en Java per a operacions d'entrada/sortida més avançades que les simples operacions per consola.</p>
+
+    {% include info_box.html
+       contingut="<strong>Objectius d'aprenentatge:</strong><br>
+       • Llegir fitxers de qualsevol tipus: línies completes, números, caràcters, etc.<br>
+       • Emmagatzemar en memòria les dades llegides utilitzant arrays i objectes senzills.<br>
+       • Escriure en fitxers dades que provenen de variables simples, arrays i objectes."
+    %}
+
+    <h3>Fluxos (Streams) en Java</h3>
+    
+    <p>L'entrada/sortida en Java es realitza mitjançant el concepte de <strong>fluxos (streams)</strong>, que permeten treballar amb dades en forma de bytes o de caràcters. Es distingeixen dues grans categories:</p>
+
+    <ul>
+        <li><strong>Fluxos basats en bytes:</strong> Per a fitxers binaris.</li>
+        <li><strong>Fluxos basats en caràcters:</strong> Ideals per a la manipulació de textos.</li>
+    </ul>
+
+    {% include definicio.html terme="Flux (Stream)" definicio="Canal de comunicació que permet llegir o escriure dades de manera seqüencial. En Java, els fluxos abstracten l'origen o destinació de les dades (fitxer, memòria, xarxa, etc.)." %}
+
+    <h3>Classes per a Lectura i Escriptura Elemental</h3>
+    
+    <p>Per llegir o escriure dades elementals es poden emprar classes com:</p>
+    
+    <ul>
+        <li><code>FileReader</code> i <code>FileWriter</code>: Per treballar amb caràcters.</li>
+        <li><code>BufferedReader</code> i <code>BufferedWriter</code>: Per a operacions més eficients, amb mètodes com <code>readLine()</code>.</li>
+        <li><code>Scanner</code>: També és útil per llegir números i cadenes des de fitxers.</li>
+    </ul>
+
+    {% include prompt-ai.html
+       contingut="Explica'm les diferències entre fluxos de bytes i fluxos de caràcters en Java. Quan hauria d'usar cada tipus i quins són els avantatges i inconvenients de cadascun per a diferents tipus de fitxers?"
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc2_Seccio2">Gestió d'Excepcions</h2>
+    
+    <p>En les operacions d'E/S és molt comú que es produeixin errors (per exemple, un fitxer inexistent o problemes de permisos). Per això, Java utilitza excepcions, sent les més habituals:</p>
+
+    <ul>
+        <li><code>IOException</code>: Error general d'entrada/sortida.</li>
+        <li><code>FileNotFoundException</code>: Error específic quan no es troba el fitxer.</li>
+    </ul>
+
+    {% include warning_box.html
+       contingut="<strong>Important:</strong> Es recomana utilitzar blocs <code>try-catch</code> i la construcció <code>try-with-resources</code> per garantir el tancament automàtic dels recursos."
+    %}
+
+    <h3>Exemple de Gestió d'Excepcions</h3>
+
+    {% capture code_exceptions %}
+try (BufferedReader br = new BufferedReader(new FileReader("dades.txt"))) {
+    // Processar el fitxer
+} catch (IOException ex) {
+    System.err.println("Error: " + ex.getMessage());
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_exceptions %}
+
+    {% include definicio.html terme="Try-with-resources" definicio="Construcció de Java que garanteix que els recursos (com fitxers) es tanquin automàticament al final del bloc try, fins i tot si es produeix una excepció." %}
+
+    {% include prompt-ai.html
+       contingut="Crea'm exemples de gestió robusta d'excepcions per a operacions de fitxers en Java. Inclou diferents escenaris: fitxer no trobat, permisos insuficients, espai en disc ple, i com recuperar-se de cada error."
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc2_Seccio3">Lectura de Fitxers i Emmagatzematge en Memòria</h2>
+    
+    <p>En aquesta secció es presenten exemples per llegir diferents tipus de dades i emmagatzemar-les en arrays.</p>
+
+    <h3>Lectura de Línies de Text amb Array</h3>
+    
+    <p>Suposem que el fitxer té com a màxim 100 línies. Llegirem el fitxer línia a línia i les guardarem en un array de cadenes.</p>
+
+    {% capture code_read_lines %}
+import java.io.*;
+
+public class LlegirLinies {
+    public static void main(String[] args) {
+        String[] linies = new String[100]; // màxim 100 línies
+        int count = 0;
+        
+        try (BufferedReader br = new BufferedReader(new FileReader("texte.txt"))) {
+            String linia;
+            while ((linia = br.readLine()) != null && count < linies.length) {
+                linies[count] = linia;
+                count++;
+            }
+        } catch (IOException ex) {
+            System.err.println("Error en llegir el fitxer: " + ex.getMessage());
+        }
+        
+        // Mostrar les línies emmagatzemades
+        for (int i = 0; i < count; i++) {
+            System.out.println(linies[i]);
+        }
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_read_lines %}
+
+    <h3>Lectura de Números amb Array</h3>
+    
+    <p>Aquest exemple llegeix números enters des d'un fitxer que conté fins a 100 números separats per espais o salts de línia.</p>
+
+    {% capture code_read_numbers %}
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class LlegirNumeros {
+    public static void main(String[] args) {
+        int[] numeros = new int[100]; // màxim 100 números
+        int count = 0;
+        
+        try (Scanner sc = new Scanner(new File("numeros.txt"))) {
+            while (sc.hasNextInt() && count < numeros.length) {
+                numeros[count] = sc.nextInt();
+                count++;
+            }
+        } catch (FileNotFoundException ex) {
+            System.err.println("Fitxer no trobat: " + ex.getMessage());
+        }
+        
+        // Mostrar els números llegits
+        for (int i = 0; i < count; i++) {
+            System.out.println(numeros[i]);
+        }
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_read_numbers %}
+
+    <h3>Lectura de Caràcters</h3>
+    
+    <p>Per llegir un fitxer caràcter a caràcter s'utilitza FileReader directament.</p>
+
+    {% capture code_read_chars %}
+import java.io.FileReader;
+import java.io.IOException;
+
+public class LlegirCaracters {
+    public static void main(String[] args) {
+        try (FileReader fr = new FileReader("caracters.txt")) {
+            int c;
+            while ((c = fr.read()) != -1) {
+                System.out.print((char)c);
+            }
+        } catch (IOException ex) {
+            System.err.println("Error en llegir el fitxer: " + ex.getMessage());
+        }
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_read_chars %}
+
+    {% include definicio.html terme="BufferedReader" definicio="Classe que llegeix text d'un flux de caràcters emmagatzemant els caràcters en un buffer per proporcionar una lectura eficient de caràcters, arrays i línies." %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc2_Seccio4">Utilització d'Objectes per a la Gestió de Dades</h2>
+    
+    <p>Per gestionar les dades de manera més estructurada, es poden definir classes senzilles que representin entitats.</p>
+
+    <h3>Definició d'una Classe Senzilla: Producte</h3>
+    
+    <p>Definim una classe Producte amb propietats bàsiques de nom i preu.</p>
+
+    {% capture code_class_product %}
+public class Producte {
+    private String nom;
+    private double preu;
+    
+    // Constructor
+    public Producte(String nom, double preu) {
+        this.nom = nom;
+        this.preu = preu;
+    }
+    
+    // Getters
+    public String getNom() {
+        return nom;
+    }
+    
+    public double getPreu() {
+        return preu;
+    }
+    
+    @Override
+    public String toString() {
+        return nom + ", " + preu + " €";
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_class_product %}
+
+    <h3>Lectura de Fitxers per Crear Objectes</h3>
+    
+    <p>Suposem que tenim un fitxer productes.txt on cada línia conté el nom i el preu d'un producte separats per una coma. L'exemple llegeix el fitxer, crea objectes Producte i els emmagatzema en un array.</p>
+
+    {% capture code_read_objects %}
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class LlegirProductes {
+    public static void main(String[] args) {
+        Producte[] productes = new Producte[100]; // màxim 100 productes
+        int count = 0;
+        
+        try (BufferedReader br = new BufferedReader(new FileReader("productes.txt"))) {
+            String linia;
+            while ((linia = br.readLine()) != null && count < productes.length) {
+                // Suposem que la línia té el format: nom,preu
+                String[] parts = linia.split(",");
+                String nom = parts[0].trim();
+                double preu = Double.parseDouble(parts[1].trim());
+                productes[count] = new Producte(nom, preu);
+                count++;
+            }
+        } catch (IOException ex) {
+            System.err.println("Error en llegir el fitxer: " + ex.getMessage());
+        }
+        
+        // Mostrar els productes llegits
+        for (int i = 0; i < count; i++) {
+            System.out.println(productes[i]);
+        }
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_read_objects %}
+
+    <h3>Escriptura de Fitxers a Partir d'Objectes</h3>
+    
+    <p>En aquest exemple escrivim en un fitxer les dades d'un array d'objectes Producte en format CSV.</p>
+
+    {% capture code_write_objects %}
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class EscriureProductes {
+    public static void main(String[] args) {
+        // Definim un array d'objectes Producte
+        Producte[] productes = {
+            new Producte("Arròs", 1.99),
+            new Producte("Sucre", 0.89),
+            new Producte("Oli", 3.45),
+            new Producte("Sal", 0.59)
+        };
+        
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("sortida_productes.txt"))) {
+            for (int i = 0; i < productes.length; i++) {
+                bw.write(productes[i].getNom() + ", " + productes[i].getPreu() + " €");
+                bw.newLine();
+            }
+        } catch (IOException ex) {
+            System.err.println("Error en escriure el fitxer: " + ex.getMessage());
+        }
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_write_objects %}
+
+    {% include success_box.html
+       contingut="<strong>Millor pràctica:</strong> Utilitzar objectes per representar dades estructurades facilita el manteniment del codi i fa que sigui més llegible i reutilitzable."
+    %}
+
+    {% include prompt-ai.html
+       contingut="Explica'm les diferències entre utilitzar arrays vs ArrayList per emmagatzemar objectes llegits d'un fitxer. Quan hauria d'usar cada opció i quins són els avantatges i inconvenients en termes de memòria i rendiment?"
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc2_Seccio5">Exercicis Pràctics</h2>
+    
+    <p>Per consolidar els coneixements, es proposen els següents exercicis:</p>
+
+    {% include exercici.html 
+       nom="Suma i mitjana de números"
+       dificultat="Fàcil"
+       temps="15 min"
+       descripcio="<p>Llegir un fitxer de text que contingui números, emmagatzemar-los en un array i calcular-ne la suma i la mitjana.</p>"
+    %}
+
+    {% include exercici.html 
+       nom="Creació de fitxer CSV"
+       dificultat="Fàcil"
+       temps="20 min"
+       descripcio="<p>Crear un programa que sol·liciti dades a l'usuari (nom, edat, etc.), les emmagatzemi en variables i en un array, i després les escrigui en un fitxer CSV.</p>"
+    %}
+
+    {% include exercici.html 
+       nom="Processament de text"
+       dificultat="Mitjà"
+       temps="25 min"
+       descripcio="<p>Dissenyar un programa que llegeixi un fitxer de línies, modifiqui el contingut (per exemple, convertint tot a majúscules) i el guardi en un nou fitxer.</p>"
+    %}
+
+    {% include exercici.html 
+       nom="Comptador de vocals i consonants"
+       dificultat="Mitjà"
+       temps="30 min"
+       descripcio="<p>Implementar un programa que llegeixi un fitxer caràcter a caràcter, compti la quantitat de vocals i consonants, i escrigui els resultats en un fitxer resum.</p>"
+    %}
+
+    {% include exercici.html 
+       nom="Gestió de productes"
+       dificultat="Avançat"
+       temps="45 min"
+       descripcio="<p>Llegir dades d'un fitxer (per exemple, informació de productes), crear objectes a partir d'elles i després escriure aquests objectes en un nou fitxer.</p>"
+    %}
+
+    {% include prompt-ai.html
+       contingut="Per a l'exercici de gestió de productes: quin és l'error més comú quan es parseja un CSV amb preus que tenen comes decimals (ex: '1,50')? Com puc validar que les dades llegides són correctes abans de crear l'objecte?"
+    %}
+</div>
