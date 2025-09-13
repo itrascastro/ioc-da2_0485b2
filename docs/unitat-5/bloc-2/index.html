@@ -293,7 +293,209 @@ public class EscriureProductes {
 </div>
 
 <div class="section">
-    <h2 id="Unitat5_Bloc2_Seccio5">Exercicis Pràctics</h2>
+    <h2 id="Unitat5_Bloc2_Seccio5">Rendiment i Bones Pràctiques</h2>
+    
+    <p>Quan treballem amb fitxers, especialment de grans dimensions, el rendiment pot ser crític. Aquest apartat cobreix les millors pràctiques per optimitzar les operacions d'E/S.</p>
+
+    <h3>Comparació de Rendiment: Buffered vs. No Buffered</h3>
+    
+    <p>Les classes <code>BufferedReader</code> i <code>BufferedWriter</code> milloren significativament el rendiment perquè minimitzen les crides al sistema operatiu:</p>
+
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Classe</th>
+                <th>Buffer Intern</th>
+                <th>Crides al SO</th>
+                <th>Rendiment</th>
+                <th>Ús Recomanat</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>FileReader</code></td>
+                <td>No</td>
+                <td>Una per caràcter</td>
+                <td>Molt lent</td>
+                <td>Fitxers molt petits</td>
+            </tr>
+            <tr>
+                <td><code>BufferedReader</code></td>
+                <td>8192 bytes</td>
+                <td>Una per buffer</td>
+                <td>Ràpid</td>
+                <td>Lectura general</td>
+            </tr>
+            <tr>
+                <td><code>Scanner</code></td>
+                <td>Intern</td>
+                <td>Variable</td>
+                <td>Mitjà</td>
+                <td>Parsing de dades</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Patrons de Disseny per a E/S Robusta</h3>
+    
+    <p>Els patrons següents ajuden a escriure codi més mantenible i eficient:</p>
+
+    <h4>1. Patrón Try-with-Resources (Recomanat)</h4>
+    
+    {% capture code_try_resources %}
+// Gestió automàtica de recursos
+try (BufferedReader reader = Files.newBufferedReader(Paths.get("dades.txt"));
+     BufferedWriter writer = Files.newBufferedWriter(Paths.get("sortida.txt"))) {
+    
+    String linia;
+    while ((linia = reader.readLine()) != null) {
+        writer.write(linia.toUpperCase());
+        writer.newLine();
+    }
+    
+} catch (IOException e) {
+    System.err.println("Error d'E/S: " + e.getMessage());
+}
+// Els recursos es tanquen automàticament
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_try_resources %}
+
+    <h4>2. Validació i Sanitització de Dades</h4>
+    
+    {% capture code_validacio %}
+public static boolean validarLinia(String linia) {
+    // Verificar que la línia no sigui null ni buida
+    if (linia == null || linia.trim().isEmpty()) {
+        return false;
+    }
+    
+    // Verificar format específic (exemple: CSV amb 3 camps)
+    String[] camps = linia.split(",");
+    if (camps.length != 3) {
+        return false;
+    }
+    
+    // Validacions específiques per camp
+    try {
+        Integer.parseInt(camps[1].trim()); // Segon camp ha de ser número
+        return true;
+    } catch (NumberFormatException e) {
+        return false;
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_validacio %}
+
+    <h3>Gestió de Fitxers Grans: Processament per Lots</h3>
+    
+    <p>Per fitxers que no caben en memòria, processem les dades per lots:</p>
+    
+    {% capture code_processar_lots %}
+public static void processarFitxerGran(String nomFitxer, int midaLot) {
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(nomFitxer))) {
+        List<String> lot = new ArrayList<>(midaLot);
+        String linia;
+        
+        while ((linia = reader.readLine()) != null) {
+            lot.add(linia);
+            
+            // Processar quan el lot està ple
+            if (lot.size() >= midaLot) {
+                processarLot(lot);
+                lot.clear(); // Alliberar memòria
+            }
+        }
+        
+        // Processar les línies restants
+        if (!lot.isEmpty()) {
+            processarLot(lot);
+        }
+        
+    } catch (IOException e) {
+        System.err.println("Error processant fitxer: " + e.getMessage());
+    }
+}
+
+private static void processarLot(List<String> lot) {
+    // Lògica específica per processar el lot
+    for (String linia : lot) {
+        // Processar cada línia
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_processar_lots %}
+
+    <h3>Monitorització i Logging</h3>
+    
+    <p>És important registrar informació sobre el procés per facilitar la depuració:</p>
+    
+    {% capture code_logging %}
+public static void llegirAmbLog(String nomFitxer) {
+    long tempsInici = System.currentTimeMillis();
+    int liniesProcessades = 0;
+    int liniesErrònies = 0;
+    
+    try (BufferedReader reader = Files.newBufferedReader(Paths.get(nomFitxer))) {
+        String linia;
+        
+        while ((linia = reader.readLine()) != null) {
+            liniesProcessades++;
+            
+            if (!validarLinia(linia)) {
+                liniesErrònies++;
+                System.err.printf("Línia %d invàlida: %s%n", liniesProcessades, linia);
+                continue;
+            }
+            
+            // Processar línia vàlida
+            // ...
+            
+            // Informar progrés cada 1000 línies
+            if (liniesProcessades % 1000 == 0) {
+                System.out.printf("Processades %d línies...%n", liniesProcessades);
+            }
+        }
+        
+    } catch (IOException e) {
+        System.err.println("Error llegint fitxer: " + e.getMessage());
+        return;
+    }
+    
+    long tempsFinal = System.currentTimeMillis();
+    System.out.printf("Procés completat:%n" +
+                     "- Línies processades: %d%n" +
+                     "- Línies errònies: %d%n" +
+                     "- Temps total: %d ms%n",
+                     liniesProcessades, liniesErrònies, (tempsFinal - tempsInici));
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_logging %}
+
+    {% include info_box.html
+       contingut="<strong>Consells de rendiment:</strong><br>
+       • Utilitza sempre BufferedReader/BufferedWriter per fitxers de text<br>
+       • Processa dades per lots quan els fitxers són molt grans<br>
+       • Valida les dades abans de processar-les<br>
+       • Registra informació útil per facilitar la depuració<br>
+       • Tanca sempre els recursos utilitzant try-with-resources"
+    %}
+
+    {% include warning_box.html
+       contingut="<strong>Errors comuns:</strong><br>
+       • No tancar fitxers (memory leaks)<br>
+       • Carregar fitxers grans completament en memòria<br>
+       • No validar dades d'entrada<br>
+       • Ignorar excepcions d'E/S<br>
+       • Utilitzar classes no buffered per fitxers grans"
+    %}
+
+    {% include prompt-ai.html
+       contingut="Com puc optimitzar la lectura d'un fitxer CSV de 100MB amb 2 milions de línies? Vull processar només les línies que compleixin certes condicions i generar estadístiques en temps real."
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat5_Bloc2_Seccio6">Exercicis Pràctics</h2>
     
     <p>Per consolidar els coneixements, es proposen els següents exercicis:</p>
 

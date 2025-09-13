@@ -85,9 +85,89 @@ System.out.printf("Nom: %s | Edat: %d | Alçada: %.2f metres\n", "Pau", 25, 1.75
 
     {% include definicio.html terme="Especificadors de Format" definicio="Codis especials que s'utilitzen en printf() per indicar com s'ha de formatar cada valor: %s per strings, %d per enters, %f per decimals, %.2f per decimals amb 2 xifres." %}
 
-    <p><strong>Significat dels especificadors:</strong></p>
+    <h3>Especificadors de Format Més Comuns</h3>
+    
+    <p>Els especificadors de format són codis especials que defineixen com s'ha de mostrar cada tipus de dada:</p>
+    
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Especificador</th>
+                <th>Tipus de Dada</th>
+                <th>Descripció</th>
+                <th>Exemple</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>%s</code></td>
+                <td>String</td>
+                <td>Cadena de text</td>
+                <td>"Hola món"</td>
+            </tr>
+            <tr>
+                <td><code>%d</code></td>
+                <td>int</td>
+                <td>Número enter decimal</td>
+                <td>42</td>
+            </tr>
+            <tr>
+                <td><code>%f</code></td>
+                <td>float/double</td>
+                <td>Número decimal amb 6 decimals</td>
+                <td>3.141593</td>
+            </tr>
+            <tr>
+                <td><code>%.2f</code></td>
+                <td>float/double</td>
+                <td>Número decimal amb 2 decimals</td>
+                <td>3.14</td>
+            </tr>
+            <tr>
+                <td><code>%c</code></td>
+                <td>char</td>
+                <td>Un sol caràcter</td>
+                <td>'A'</td>
+            </tr>
+            <tr>
+                <td><code>%b</code></td>
+                <td>boolean</td>
+                <td>Valor booleà</td>
+                <td>true/false</td>
+            </tr>
+            <tr>
+                <td><code>%n</code></td>
+                <td>-</td>
+                <td>Salt de línia portable</td>
+                <td>-</td>
+            </tr>
+        </tbody>
+    </table>
 
-    <p>Exemple amb format numèric:</p>
+    <h3>Modificadors de Format Avançats</h3>
+    
+    {% capture code_modificadors %}
+// Amplada mínima del camp
+System.out.printf("Número: %5d%n", 42);        // "Número:    42"
+
+// Emplenar amb zeros
+System.out.printf("Codi: %04d%n", 7);          // "Codi: 0007"
+
+// Alineació a l'esquerra
+System.out.printf("%-10s|%n", "Hola");         // "Hola      |"
+
+// Separador de milers (des de Java 7)
+System.out.printf("Valor: %,d%n", 1234567);    // "Valor: 1.234.567"
+
+// Signe sempre visible
+System.out.printf("Positiu: %+d%n", 25);       // "Positiu: +25"
+
+// Notació científica
+System.out.printf("Científica: %e%n", 123.45); // "Científica: 1.234500e+02"
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_modificadors %}
+
+    <p><strong>Exemple complet amb diferents formats:</strong></p>
 
     {% capture code_format_numeric %}
 double preu = 1234.56789;

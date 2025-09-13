@@ -80,7 +80,7 @@
                     {% for unitat in site.curs.unitats %}
                         {% for bloc in unitat.blocs %}
                             <a href="{{ bloc.url | relative_url }}" class="nav-dropdown-item {% if page.url == bloc.url %}current{% endif %}">
-                                Bloc {{ bloc.numero }}: {{ bloc.nom }}
+                                Unitat {{ unitat.numero }} - Bloc {{ bloc.numero }}: {{ bloc.nom }}
                             </a>
                         {% endfor %}
                     {% endfor %}
@@ -165,32 +165,62 @@
             {% if page.layout == 'bloc' %}
             <nav class="page-navigation" role="navigation" aria-label="Navegació entre blocs">
                 <div class="nav-links-container">
-                    {% assign current_bloc = page.bloc_numero | plus: 0 %}
-                    {% assign prev_bloc = current_bloc | minus: 1 %}
-                    {% assign next_bloc = current_bloc | plus: 1 %}
+                    {% comment %} Trobar el bloc actual i els seus veïns {% endcomment %}
+                    {% assign current_unitat = null %}
+                    {% assign current_bloc = null %}
+                    {% assign prev_bloc = null %}
+                    {% assign next_bloc = null %}
                     
-                    <div class="nav-link-wrapper">
-                        {% if prev_bloc > 0 %}
-                            {% for unitat in site.curs.unitats %}
-                                {% for bloc in unitat.blocs %}
-                                    {% if bloc.numero == prev_bloc %}
-                                    <a href="{{ bloc.url | relative_url }}" class="nav-button" aria-label="Bloc anterior: {{ bloc.nom }}">← Anterior</a>
-                                    {% break %}
+                    {% comment %} Primer trobar la unitat actual {% endcomment %}
+                    {% for unitat in site.curs.unitats %}
+                        {% if unitat.numero == page.unitat %}
+                            {% assign current_unitat = unitat %}
+                            {% break %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% comment %} Dins de la unitat actual, trobar el bloc actual i els adjacents {% endcomment %}
+                    {% if current_unitat %}
+                        {% for bloc in current_unitat.blocs %}
+                            {% if bloc.numero == page.bloc %}
+                                {% assign current_bloc = bloc %}
+                                {% assign current_index = forloop.index %}
+                                
+                                {% comment %} Bloc anterior {% endcomment %}
+                                {% if current_index > 1 %}
+                                    {% assign prev_index = current_index | minus: 1 %}
+                                    {% for prev_bloc_item in current_unitat.blocs %}
+                                        {% if forloop.index == prev_index %}
+                                            {% assign prev_bloc = prev_bloc_item %}
+                                            {% break %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                
+                                {% comment %} Bloc següent {% endcomment %}
+                                {% assign next_index = current_index | plus: 1 %}
+                                {% for next_bloc_item in current_unitat.blocs %}
+                                    {% if forloop.index == next_index %}
+                                        {% assign next_bloc = next_bloc_item %}
+                                        {% break %}
                                     {% endif %}
                                 {% endfor %}
-                            {% endfor %}
+                                
+                                {% break %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="nav-link-wrapper">
+                        {% if prev_bloc %}
+                        <a href="{{ prev_bloc.url | relative_url }}" class="nav-button" aria-label="Bloc anterior: {{ prev_bloc.nom }}">← Anterior</a>
                         {% endif %}
                     </div>
                     
                     <div class="nav-link-wrapper">
-                        {% for unitat in site.curs.unitats %}
-                            {% for bloc in unitat.blocs %}
-                                {% if bloc.numero == next_bloc %}
-                                <a href="{{ bloc.url | relative_url }}" class="nav-button" aria-label="Bloc següent: {{ bloc.nom }}">Següent →</a>
-                                {% break %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endfor %}
+                        {% if next_bloc %}
+                        <a href="{{ next_bloc.url | relative_url }}" class="nav-button" aria-label="Bloc següent: {{ next_bloc.nom }}">Següent →</a>
+                        {% endif %}
                     </div>
                 </div>
             </nav>

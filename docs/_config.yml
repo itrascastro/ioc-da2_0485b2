@@ -39,10 +39,35 @@ curs:
             - { id: "Unitat5_Bloc2_Seccio3", titol: "Lectura de Fitxers i Emmagatzematge en Memòria" }
             - { id: "Unitat5_Bloc2_Seccio4", titol: "Utilització d'Objectes per a la Gestió de Dades" }
             - { id: "Unitat5_Bloc2_Seccio5", titol: "Exercicis Pràctics" }
+    - nom: "Aplicació de les estructures d'emmagatzematge (RA6)"
+      numero: 6
+      descripcio: "Aplicació de les estructures d'emmagatzematge (RA6)"
+      descripcio_html: false
+      blocs:
+        - nom: "Estructures de dades bàsiques"
+          numero: 1
+          descripcio: "Estructures de dades bàsiques"
+          url: "/unitat-6/bloc-1/"
+          seccions:
+            - { id: "Unitat6_Bloc1_Seccio1", titol: "Introducció a les Estructures de Dades" }
+            - { id: "Unitat6_Bloc1_Seccio2", titol: "Arrays i Llistes" }
+            - { id: "Unitat6_Bloc1_Seccio3", titol: "Algorismes de Cerca i Ordenació" }
+            - { id: "Unitat6_Bloc1_Seccio4", titol: "Estructures de Dades Avançades" }
+            - { id: "Unitat6_Bloc1_Seccio5", titol: "Exercicis Pràctics" }
+        - nom: "Col·leccions i tipus de dades avançats"
+          numero: 2
+          descripcio: "Col·leccions i tipus de dades avançats"
+          url: "/unitat-6/bloc-2/"
+          seccions:
+            - { id: "Unitat6_Bloc2_Seccio1", titol: "Framework de Col·leccions de Java" }
+            - { id: "Unitat6_Bloc2_Seccio2", titol: "List, Set i Map" }
+            - { id: "Unitat6_Bloc2_Seccio3", titol: "Iteradors i Streams" }
+            - { id: "Unitat6_Bloc2_Seccio4", titol: "Tipus de Dades Genèrics" }
+            - { id: "Unitat6_Bloc2_Seccio5", titol: "Casos d'Ús Pràctics" }
 
 # URLs de desplegament (CANVIAR per cada professor)
 url: "https://itrascastro.github.io"                    # La vostra URL de GitHub Pages
-baseurl: ""                                             # Portable - funciona en qualsevol carpeta
+baseurl: "/ioc/da2_0485b2"                              # Subcarpeta de publicació a GitHub Pages
 repository: itrascastro/ioc-da2-optativa-angular        # El vostre repositori GitHub
 github:
   username: itrascastro                                 # El vostre usuari GitHub
@@ -139,4 +164,3 @@ exclude:
   - .jekyll-cache
   - .sass-cache
   - .jekyll-metadata
-
