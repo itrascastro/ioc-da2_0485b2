@@ -13,6 +13,6 @@
 
   <div class="code-container">
     <div class="line-numbers" aria-hidden="true"></div>
-    <pre role="textbox" aria-readonly="true" aria-label="Codi font"><code class="language-{{ include.lang | default: 'text' }}">{{ include.code | escape }}</code></pre>
+    <pre role="textbox" aria-readonly="true" aria-label="Codi font"><code class="language-{{ include.lang | default: 'text' }}">{{ include.code | strip | escape }}</code></pre>
   </div>
 </div>

@@ -1,0 +1,539 @@
+---
+layout: bloc
+title: "Bloc 1: Fonaments teòrics i exemples pràctics"
+description: "Conceptes ORM, configuració Hibernate, operacions CRUD i relacions"
+keywords: "Hibernate, ORM, JPA, PostgreSQL, Java, persistència"
+unitat: 8
+bloc: 1
+bloc_numero: 1
+---
+
+<!--
+  Pàgina de contingut del Bloc 1 (Unitat 8)
+  Fonaments teòrics de Hibernate amb exemples pràctics
+-->
+
+<div class="section">
+    <h2 id="Unitat8_Bloc1_Seccio1">Introducció a ORM i Hibernate</h2>
+    
+    <h3>Què és ORM?</h3>
+    
+    <p><strong>ORM (Object-Relational Mapping)</strong> és una tècnica de programació que permet convertir dades entre sistemes de tipus incompatibles utilitzant llenguatges de programació orientats a objectes. En el nostre cas, ens permet treballar amb bases de dades relacionals com si fossin objectes Java.</p>
+
+    {% include info_box.html
+       contingut="Quan treballem amb Java i bases de dades relacionals, existeix una desconnexió conceptual:<br>
+       • <strong>Java</strong>: Treballa amb objectes, herència, polimorfisme<br>
+       • <strong>Base de dades</strong>: Treballa amb taules, files, columnes, claus foranes"
+    %}
+
+    <h3>Exemple comparatiu: JDBC vs Hibernate</h3>
+    
+    <p>Vegem la diferència entre l'aproximació tradicional amb JDBC i l'ús d'Hibernate:</p>
+
+    {% capture code_jdbc %}
+// Amb JDBC tradicional
+Connection conn = DriverManager.getConnection(
+    "jdbc:postgresql://localhost/botiga", "user", "password");
+
+// SQL manual
+String sql = "INSERT INTO productes (nom, preu, categoria_id) VALUES (?, ?, ?)";
+PreparedStatement stmt = conn.prepareStatement(sql);
+stmt.setString(1, "Portàtil");
+stmt.setDouble(2, 899.99);
+stmt.setInt(3, 1);
+stmt.executeUpdate();
+
+// Tancament manual de recursos
+stmt.close();
+conn.close();
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_jdbc %}
+
+    {% capture code_hibernate %}
+// Amb Hibernate
+Producte producte = new Producte();
+producte.setNom("Portàtil");
+producte.setPreu(899.99);
+producte.setCategoria(categoria);
+
+// Persistència automàtica
+session.save(producte);
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_hibernate %}
+
+    <h3>Què és Hibernate?</h3>
+    
+    <p><strong>Hibernate</strong> és un framework ORM per Java que implementa l'especificació <strong>JPA (Jakarta Persistence API)</strong>. Proporciona un mapatge entre objectes Java i taules de base de dades.</p>
+
+    {% include success_box.html
+       contingut="<strong>Avantatges d'Hibernate:</strong><br>
+       ✅ Productivitat: Menys codi boilerplate<br>
+       ✅ Mantenibilitat: Codi més net i llegible<br>
+       ✅ Portabilitat: Funciona amb diferents bases de dades<br>
+       ✅ Cache: Sistema de cache integrat"
+    %}
+
+    {% include warning_box.html
+       contingut="<strong>Desavantatges d'Hibernate:</strong><br>
+       ❌ Corba d'aprenentatge: Necessita temps per dominar-lo<br>
+       ❌ Rendiment: Pot ser més lent que SQL optimitzat<br>
+       ❌ Complexitat: Pot generar SQL ineficient si no es configura bé"
+    %}
+
+    {% capture code_exemple_entity %}
+import javax.persistence.*;
+
+@Entity
+@Table(name = "productes")
+public class Producte {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "nom", nullable = false, length = 100)
+    private String nom;
+    
+    @Column(name = "preu", nullable = false)
+    private Double preu;
+    
+    // Constructors, getters i setters
+    public Producte() {}
+    
+    public Producte(String nom, Double preu) {
+        this.nom = nom;
+        this.preu = preu;
+    }
+    
+    // Getters i setters...
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_exemple_entity %}
+
+    {% include prompt-ai.html
+       contingut="Explica'm les diferències entre ORM i JDBC en Java. Vull entendre quan és millor usar cada un, amb exemples pràctics de casos d'ús reals on cada aproximació té avantatges."
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat8_Bloc1_Seccio2">Configuració i Conceptes Bàsics</h2>
+    
+    <h3>Configuració hibernate.cfg.xml</h3>
+    
+    <p>El fitxer <code>hibernate.cfg.xml</code> és el cor de la configuració d'Hibernate. Es col·loca a <code>src/main/resources/</code>:</p>
+
+    {% capture code_config %}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Configuració de connexió a PostgreSQL -->
+        <property name="hibernate.connection.driver_class">
+            org.postgresql.Driver
+        </property>
+        <property name="hibernate.connection.url">
+            jdbc:postgresql://localhost:5432/botiga
+        </property>
+        <property name="hibernate.connection.username">usuario</property>
+        <property name="hibernate.connection.password">contrasenya</property>
+        
+        <!-- Configuració del dialecte -->
+        <property name="hibernate.dialect">
+            org.hibernate.dialect.PostgreSQLDialect
+        </property>
+        
+        <!-- Configuració de debug -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+        
+        <!-- Configuració d'esquema -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        
+        <!-- Mapatge de classes -->
+        <mapping class="com.exemple.model.Producte"/>
+    </session-factory>
+</hibernate-configuration>
+    {% endcapture %}
+    {% include code-block.html lang="markup" code=code_config %}
+
+    {% include definicio.html terme="hibernate.hbm2ddl.auto" definicio="Propietat que controla la generació automàtica de l'esquema de base de dades: 'create' (crea l'esquema), 'update' (actualitza), 'validate' (valida), 'none' (no fa res)." %}
+
+    <h3>SessionFactory i Session</h3>
+    
+    <p>La <strong>SessionFactory</strong> és un objecte immutable que es crea una vegada per aplicació, mentre que la <strong>Session</strong> és la interfície principal per interactuar amb la base de dades.</p>
+
+    {% capture code_hibernateutil %}
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class HibernateUtil {
+    private static final SessionFactory sessionFactory;
+    
+    static {
+        try {
+            sessionFactory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .buildSessionFactory();
+        } catch (Throwable ex) {
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+    
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+    
+    public static void shutdown() {
+        getSessionFactory().close();
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_hibernateutil %}
+
+    {% include info_box.html
+       contingut="<strong>Cicle de vida dels objectes en Hibernate:</strong><br>
+       • <strong>Transient</strong>: Objecte creat però no associat amb sessió<br>
+       • <strong>Persistent</strong>: Objecte associat amb sessió activa<br>
+       • <strong>Detached</strong>: Objecte que estava persistent però la sessió s'ha tancat"
+    %}
+
+    {% include exercici.html 
+       nom="Configuració bàsica d'Hibernate"
+       dificultat="Fàcil"
+       temps="20 min"
+       descripcio="<p>Crea un fitxer hibernate.cfg.xml per connectar amb una base de dades PostgreSQL local. Inclou la configuració per mostrar el SQL generat i actualitzar l'esquema automàticament.</p>"
+       pistes="Recorda configurar el dialect correcte per PostgreSQL|Usa hibernate.show_sql=true per veure les consultes|La propietat hbm2ddl.auto=update és segura per desenvolupament"
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat8_Bloc1_Seccio3">Mapatge d'Entitats</h2>
+    
+    <h3>Correspondència de tipus Java a PostgreSQL</h3>
+    
+    <p>Hibernate mapeja automàticament els tipus de dades Java als tipus PostgreSQL:</p>
+
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Tipus Java</th>
+                <th>Tipus PostgreSQL</th>
+                <th>Anotació recomanada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>String</code></td>
+                <td>VARCHAR, TEXT</td>
+                <td><code>@Column(length=N)</code></td>
+            </tr>
+            <tr>
+                <td><code>Integer</code></td>
+                <td>INTEGER</td>
+                <td><code>@Column</code></td>
+            </tr>
+            <tr>
+                <td><code>Long</code></td>
+                <td>BIGINT</td>
+                <td><code>@Column</code></td>
+            </tr>
+            <tr>
+                <td><code>BigDecimal</code></td>
+                <td>DECIMAL, NUMERIC</td>
+                <td><code>@Column(precision=P, scale=S)</code></td>
+            </tr>
+            <tr>
+                <td><code>Boolean</code></td>
+                <td>BOOLEAN</td>
+                <td><code>@Column</code></td>
+            </tr>
+            <tr>
+                <td><code>LocalDateTime</code></td>
+                <td>TIMESTAMP</td>
+                <td><code>@Column</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Anotacions de mapatge</h3>
+
+    {% capture code_anotacions %}
+@Entity
+@Table(name = "categories", 
+       uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
+public class Categoria {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "nom", nullable = false, length = 50, unique = true)
+    private String nom;
+    
+    @Column(name = "descripcio", columnDefinition = "TEXT")
+    private String descripcio;
+    
+    @Column(name = "activa", nullable = false)
+    private Boolean activa = true;
+    
+    @Column(name = "percentatge_descompte", precision = 5, scale = 2)
+    private BigDecimal percentatgeDescompte;
+    
+    @Column(name = "data_creacio", nullable = false)
+    private LocalDateTime dataCreacio;
+    
+    // Constructors i mètodes...
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_anotacions %}
+
+    {% include definicio.html terme="Anotacions de cicle de vida" definicio="Hibernate proporciona anotacions per executar mètodes en moments específics: @PrePersist, @PostPersist, @PreUpdate, @PostUpdate, @PreRemove, @PostRemove, @PostLoad." %}
+
+    {% capture code_lifecycle %}
+@Entity
+public class Producte {
+    
+    @Column(name = "data_creacio")
+    private LocalDateTime dataCreacio;
+    
+    @Column(name = "data_modificacio")
+    private LocalDateTime dataModificacio;
+    
+    @PrePersist
+    protected void onCreate() {
+        dataCreacio = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        dataModificacio = LocalDateTime.now();
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_lifecycle %}
+
+    {% include exercici.html 
+       nom="Mapatge d'entitat complexa"
+       dificultat="Mitjà"
+       temps="30 min"
+       descripcio="<p>Crea una entitat Categoria amb els camps: id, nom (únic), descripció, activa (boolean), data_creació i data_modificació. Usa anotacions de cicle de vida per gestionar les dates automàticament.</p>"
+       pistes="Usa @PrePersist per la data de creació|@PreUpdate per la data de modificació|@UniqueConstraint per camps únics"
+    %}
+
+    {% include prompt-ai.html
+       contingut="Explica'm les diferents estratègies de generació de claus primàries en Hibernate (IDENTITY, SEQUENCE, TABLE, AUTO). Quan és recomanable usar cada una, especialment amb PostgreSQL?"
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat8_Bloc1_Seccio4">Operacions CRUD Bàsiques</h2>
+    
+    <h3>Mètodes principals de Session</h3>
+    
+    <p>Hibernate Session proporciona mètodes per les quatre operacions CRUD:</p>
+
+    {% include info_box.html
+       contingut="<strong>Operacions CRUD:</strong><br>
+       • <strong>Create</strong>: save(), persist()<br>
+       • <strong>Read</strong>: get(), load(), find()<br>
+       • <strong>Update</strong>: update(), merge()<br>
+       • <strong>Delete</strong>: delete(), remove()"
+    %}
+
+    {% capture code_crud_examples %}
+// CREATE - Crear nous registres
+Producte producte = new Producte("Teclat", new BigDecimal("45.99"));
+Long id = (Long) session.save(producte);
+
+// READ - Llegir registres
+Producte producte = session.get(Producte.class, 1L);
+
+// UPDATE - Actualitzar registres
+producte.setPreu(new BigDecimal("39.99"));
+// Es guarda automàticament al fer commit
+
+// DELETE - Eliminar registres
+session.delete(producte);
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_crud_examples %}
+
+    <h3>Patró DAO (Data Access Object)</h3>
+    
+    <p>El patró DAO encapsula l'accés a dades i proporciona una interfície clara:</p>
+
+    {% capture code_dao %}
+public class ProducteDAO {
+    
+    public void save(Producte producte) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.persist(producte);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Error guardant producte", e);
+        }
+    }
+    
+    public Optional<Producte> findById(Long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Producte producte = session.get(Producte.class, id);
+            return Optional.ofNullable(producte);
+        }
+    }
+    
+    public List<Producte> findAll() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Producte> query = session.createQuery(
+                "FROM Producte ORDER BY nom", Producte.class);
+            return query.getResultList();
+        }
+    }
+    
+    // Més mètodes...
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_dao %}
+
+    {% include success_box.html
+       contingut="<strong>Bones pràctiques per DAOs:</strong><br>
+       ✅ Usar try-with-resources per sessions<br>
+       ✅ Gestionar transaccions explícitament<br>
+       ✅ Fer rollback en cas d'error<br>
+       ✅ Retornar Optional per evitar nulls"
+    %}
+
+    {% include exercici.html 
+       nom="Implementació DAO completa"
+       dificultat="Difícil"
+       temps="45 min"
+       descripcio="<p>Implementa una classe ProducteDAO amb tots els mètodes CRUD: save, findById, findAll, update, delete. Inclou gestió d'errors i transaccions correcta.</p>"
+       pistes="Usa try-with-resources per les sessions|Gestiona les transaccions amb begin/commit/rollback|Retorna Optional per mètodes que poden no trobar resultats"
+    %}
+
+    {% include prompt-ai.html
+       contingut="Explica'm les diferències entre save(), persist(), update() i merge() en Hibernate. Quan hauria d'usar cada un i què passa amb l'estat dels objectes en cada cas?"
+    %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat8_Bloc1_Seccio5">Relacions entre Entitats</h2>
+    
+    <h3>Tipus de relacions</h3>
+    
+    <p>Hibernate suporta tots els tipus de relacions de bases de dades relacionals:</p>
+
+    {% include info_box.html
+       contingut="<strong>Tipus de relacions en Hibernate:</strong><br>
+       • <strong>@OneToOne</strong>: Un a un<br>
+       • <strong>@OneToMany</strong>: Un a molts<br>
+       • <strong>@ManyToOne</strong>: Molts a un<br>
+       • <strong>@ManyToMany</strong>: Molts a molts"
+    %}
+
+    <h3>Relació @ManyToOne</h3>
+    
+    <p>La relació més comuna. Molts productes pertanyen a una categoria:</p>
+
+    {% capture code_manytoone %}
+@Entity
+@Table(name = "productes")
+public class Producte {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private String nom;
+    
+    @Column(nullable = false)
+    private BigDecimal preu;
+    
+    // Relació ManyToOne amb Categoria
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
+    
+    // Constructors, getters i setters...
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_manytoone %}
+
+    <h3>Relació @OneToMany bidireccional</h3>
+
+    {% capture code_onetomany %}
+@Entity
+@Table(name = "categories")
+public class Categoria {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, unique = true)
+    private String nom;
+    
+    // Relació OneToMany amb Producte
+    @OneToMany(
+        mappedBy = "categoria",           // Camp a Producte
+        fetch = FetchType.LAZY,          // Càrrega sota demanda
+        cascade = CascadeType.ALL,       // Cascada operacions
+        orphanRemoval = true             // Eliminar orfes
+    )
+    private List<Producte> productes = new ArrayList<>();
+    
+    // Mètodes de conveniència
+    public void addProducte(Producte producte) {
+        productes.add(producte);
+        producte.setCategoria(this);
+    }
+    
+    public void removeProducte(Producte producte) {
+        productes.remove(producte);
+        producte.setCategoria(null);
+    }
+}
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_onetomany %}
+
+    {% include warning_box.html
+       contingut="<strong>Problema N+1:</strong> Quan carregues una llista d'entitats i després accedeixes a les seves relacions, Hibernate pot generar N+1 consultes (1 per la llista + N per cada relació). Solució: usar JOIN FETCH."
+    %}
+
+    {% capture code_join_fetch %}
+// Problema: N+1 queries
+List<Producte> productes = session.createQuery("FROM Producte", Producte.class).list();
+for (Producte producte : productes) {
+    // Cada accés genera una nova query!
+    System.out.println(producte.getCategoria().getNom());
+}
+
+// Solució: JOIN FETCH
+List<Producte> productes = session.createQuery(
+    "SELECT p FROM Producte p JOIN FETCH p.categoria", Producte.class).list();
+    {% endcapture %}
+    {% include code-block.html lang="java" code=code_join_fetch %}
+
+    {% include definicio.html terme="FetchType" definicio="Estratègia de càrrega de relacions: LAZY (càrrega sota demanda, recomanat), EAGER (càrrega immediata, usar amb precaució)." %}
+
+    {% include definicio.html terme="CascadeType" definicio="Operacions que es propaguen a entitats relacionades: PERSIST, MERGE, REMOVE, REFRESH, DETACH, ALL." %}
+
+    {% include exercici.html 
+       nom="Relacions bidireccionals"
+       dificultat="Difícil"
+       temps="60 min"
+       descripcio="<p>Implementa una relació bidireccional entre Categoria i Producte. Inclou mètodes de conveniència per mantenir la coherència i evita el problema N+1 amb consultes adequades.</p>"
+       pistes="Usa mappedBy per la part inverse de la relació|Implementa mètodes addProducte/removeProducte|Usa JOIN FETCH per evitar N+1|FetchType.LAZY per defecte"
+    %}
+
+    {% include prompt-ai.html
+       contingut="Explica'm les millors pràctiques per gestionar relacions bidireccionals en Hibernate. Com evito problemes de referència circular, N+1 queries i com mantinc la coherència de dades?"
+    %}
+</div>

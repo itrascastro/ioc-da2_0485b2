@@ -92,6 +92,30 @@ curs:
             - { id: "Unitat7_Bloc2_Seccio4", titol: "Principis SOLID" }
             - { id: "Unitat7_Bloc2_Seccio5", titol: "Introducció als Patrons de Disseny" }
             - { id: "Unitat7_Bloc2_Seccio6", titol: "Pràctiques" }
+    - nom: "Persistència de dades amb Hibernate (RA8)"
+      numero: 8
+      descripcio: "Persistència de dades amb Hibernate (RA8)"
+      descripcio_html: false
+      blocs:
+        - nom: "Fonaments teòrics i exemples pràctics"
+          numero: 1
+          descripcio: "Conceptes ORM, configuració i operacions CRUD"
+          url: "/unitat-8/bloc-1/"
+          seccions:
+            - { id: "Unitat8_Bloc1_Seccio1", titol: "Introducció a ORM i Hibernate" }
+            - { id: "Unitat8_Bloc1_Seccio2", titol: "Configuració i Conceptes Bàsics" }
+            - { id: "Unitat8_Bloc1_Seccio3", titol: "Mapatge d'Entitats" }
+            - { id: "Unitat8_Bloc1_Seccio4", titol: "Operacions CRUD Bàsiques" }
+            - { id: "Unitat8_Bloc1_Seccio5", titol: "Relacions entre Entitats" }
+        - nom: "Tutorial pas a pas"
+          numero: 2
+          descripcio: "Implementació pràctica completa amb Hibernate i PostgreSQL"
+          url: "/unitat-8/bloc-2/"
+          seccions:
+            - { id: "Unitat8_Bloc2_Seccio1", titol: "Preparació de l'Entorn" }
+            - { id: "Unitat8_Bloc2_Seccio2", titol: "Creació del Projecte Maven" }
+            - { id: "Unitat8_Bloc2_Seccio3", titol: "Implementació de Classes" }
+            - { id: "Unitat8_Bloc2_Seccio4", titol: "Execució i Proves" }
 
 # URLs de desplegament (CANVIAR per cada professor)
 url: "https://itrascastro.github.io"                    # La vostra URL de GitHub Pages
@@ -140,7 +164,7 @@ kramdown:
     default_lang: html
     css_class: 'highlight'
     block:
-      line_numbers: true
+      line_numbers: false
 
 # Configuració TOC (Table of Contents)
 toc:
