@@ -92,30 +92,34 @@ curs:
             - { id: "Unitat7_Bloc2_Seccio4", titol: "Principis SOLID" }
             - { id: "Unitat7_Bloc2_Seccio5", titol: "Introducció als Patrons de Disseny" }
             - { id: "Unitat7_Bloc2_Seccio6", titol: "Pràctiques" }
-    - nom: "Persistència de dades amb Hibernate (RA8)"
+    - nom: "Manteniment i gestió de bases de dades (RA8 i RA9)"
       numero: 8
-      descripcio: "Persistència de dades amb Hibernate (RA8)"
+      descripcio: "Manteniment i gestió de bases de dades (RA8 i RA9)"
       descripcio_html: false
       blocs:
-        - nom: "Fonaments teòrics i exemples pràctics"
+        - nom: "Fonaments de bases de dades orientades a objectes"
           numero: 1
-          descripcio: "Conceptes ORM, configuració i operacions CRUD"
+          descripcio: "Principis d'ORM, Hibernate i bones pràctiques de persistència"
           url: "/unitat-8/bloc-1/"
           seccions:
-            - { id: "Unitat8_Bloc1_Seccio1", titol: "Introducció a ORM i Hibernate" }
-            - { id: "Unitat8_Bloc1_Seccio2", titol: "Configuració i Conceptes Bàsics" }
-            - { id: "Unitat8_Bloc1_Seccio3", titol: "Mapatge d'Entitats" }
-            - { id: "Unitat8_Bloc1_Seccio4", titol: "Operacions CRUD Bàsiques" }
-            - { id: "Unitat8_Bloc1_Seccio5", titol: "Relacions entre Entitats" }
-        - nom: "Tutorial pas a pas"
+            - { id: "Unitat8_Bloc1_Seccio1", titol: "Introducció a la persistència i ORM" }
+            - { id: "Unitat8_Bloc1_Seccio2", titol: "Arquitectura de Hibernate i components clau" }
+            - { id: "Unitat8_Bloc1_Seccio3", titol: "Mapatge d'entitats i relacions" }
+            - { id: "Unitat8_Bloc1_Seccio4", titol: "Gestió de sessions i transaccions" }
+            - { id: "Unitat8_Bloc1_Seccio5", titol: "Patró DAO i capa de servei" }
+            - { id: "Unitat8_Bloc1_Seccio6", titol: "Bones pràctiques i optimització" }
+        - nom: "Gestió i manteniment de dades"
           numero: 2
-          descripcio: "Implementació pràctica completa amb Hibernate i PostgreSQL"
+          descripcio: "Implementació pas a pas d'una aplicació Hibernate amb PostgreSQL i VS Code"
           url: "/unitat-8/bloc-2/"
           seccions:
-            - { id: "Unitat8_Bloc2_Seccio1", titol: "Preparació de l'Entorn" }
-            - { id: "Unitat8_Bloc2_Seccio2", titol: "Creació del Projecte Maven" }
-            - { id: "Unitat8_Bloc2_Seccio3", titol: "Implementació de Classes" }
-            - { id: "Unitat8_Bloc2_Seccio4", titol: "Execució i Proves" }
+            - { id: "Unitat8_Bloc2_Seccio1", titol: "Preparació de l'entorn de treball" }
+            - { id: "Unitat8_Bloc2_Seccio2", titol: "Configuració de la base de dades PostgreSQL" }
+            - { id: "Unitat8_Bloc2_Seccio3", titol: "Configuració de Visual Studio Code i extensions" }
+            - { id: "Unitat8_Bloc2_Seccio4", titol: "Creació del projecte Maven" }
+            - { id: "Unitat8_Bloc2_Seccio5", titol: "Configuració de Hibernate" }
+            - { id: "Unitat8_Bloc2_Seccio6", titol: "Implementació de les classes Java" }
+            - { id: "Unitat8_Bloc2_Seccio7", titol: "Compilació, proves i execució final" }
 
 # URLs de desplegament (CANVIAR per cada professor)
 url: "https://itrascastro.github.io"                    # La vostra URL de GitHub Pages

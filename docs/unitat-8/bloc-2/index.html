@@ -1,147 +1,282 @@
 ---
 layout: bloc
-title: "Bloc 2: Tutorial pas a pas"
-description: "Implementació pràctica completa amb Hibernate i PostgreSQL"
-keywords: "Hibernate, PostgreSQL, Maven, tutorial, pràctic"
+title: "Bloc 2: Gestió i manteniment de dades"
+description: "Tutorial complet: configuració de l'entorn, implementació d'Hibernate i verificació amb PostgreSQL"
+keywords: "Hibernate, PostgreSQL, Java, Maven, Visual Studio Code, Tutorial"
 unitat: 8
 bloc: 2
 bloc_numero: 2
 ---
 
 <!--
-  Pàgina de contingut del Bloc 2 (Unitat 8)
-  Tutorial pas a pas per implementar una aplicació amb Hibernate i PostgreSQL
+  Bloc 2 (Unitat 8) - Transcripció i enriquiment del tutorial validat
+  Font principal: tutorial-hibernate-postgresql-vscode.pdf (42 pàgines)
+  Objectiu: l'alumne pot seguir el pas a pas sense recursos addicionals.
 -->
 
 <div class="section">
-    <h2 id="Unitat8_Bloc2_Seccio1">Preparació de l'Entorn</h2>
-    
-    <p>Abans de començar amb Hibernate, necessitem preparar l'entorn de desenvolupament amb tots els components necessaris.</p>
+    <h2 id="Unitat8_Bloc2_Seccio1">Preparació de l'entorn de treball</h2>
 
-    {% include info_box.html
-       contingut="<strong>Components necessaris:</strong><br>
-       • Java JDK 21 (LTS)<br>
-       • PostgreSQL 15+<br>
-       • Visual Studio Code amb extensions<br>
-       • Base de dades configurada"
-    %}
+    {% include objectius.html llista="Comprendre l'abast del projecte i les habilitats que s'adquiriran|Instal·lar totes les eines necessàries (Java 21, PostgreSQL 16, Visual Studio Code, Maven)|Validar la configuració de l'entorn abans de continuar" %}
 
-    <h3>Instal·lació de Java JDK 21</h3>
-    
-    <p>Descarregar Java JDK 21 des de la pàgina oficial d'Oracle i seguir les instruccions d'instal·lació.</p>
+    <h3>Què aprendràs en aquest bloc</h3>
+    <p>Treballaràs amb una aplicació Java moderna que utilitza Hibernate 6 per connectar-se a PostgreSQL. Aprendràs a configurar un <em>toolchain</em> complet: instal·lació de dependències, configuració de Visual Studio Code, creació d'un projecte Maven, implementació de classes i execució de proves.</p>
 
-    {% capture code_verificacio_java %}
-java --version
-javac --version
-    {% endcapture %}
-    {% include code-block.html lang="bash" code=code_verificacio_java %}
-
-    <p>Hauria de mostrar la versió de Java 21 instal·lada.</p>
-
-    <h3>Instal·lació de PostgreSQL</h3>
-    
-    <p>Descarregar PostgreSQL des del lloc oficial i instal·lar amb la configuració per defecte (port 5432).</p>
-
-    {% include warning_box.html
-       contingut="<strong>Important:</strong> Recordar la contrasenya del superusuari (postgres) configurada durant la instal·lació."
-    %}
-
-    <h3>Configuració de Visual Studio Code</h3>
-    
-    <p>Instal·lar les extensions necessàries:</p>
-    
+    <h3>Software necessari</h3>
     <ul>
-        <li><strong>Extension Pack for Java</strong> (Microsoft) - Inclou suport complet per Java i Maven</li>
-        <li><strong>PostgreSQL</strong> (Chris Kolkman) - Per gestionar bases de dades</li>
+        <li>Java JDK 21 (Temurin o equivalent).</li>
+        <li>PostgreSQL 16 (amb eines <code>psql</code> o pgAdmin).</li>
+        <li>Visual Studio Code (última versió estable).</li>
+        <li>Extensions de VS Code per a Java i Maven.</li>
+        <li>Apache Maven (normalment inclòs a l'Extension Pack for Java).</li>
     </ul>
 
-    <h3>Creació de la Base de Dades</h3>
+    {% include info_box.html contingut="El tutorial es basa en Java 21 i PostgreSQL 16. Versions inferiors poden provocar incompatibilitats amb Hibernate 6." %}
 
-    {% capture code_db_setup %}
--- Connectar-se a PostgreSQL
-psql -U postgres -h localhost
+    <h3>Instal·lació del JDK 21</h3>
+    <p>Segueix les instruccions específiques per al teu sistema operatiu. Després de cada instal·lació, comprova la versió amb <code>java -version</code>.</p>
 
--- Crear la base de dades
-CREATE DATABASE botiga_hibernate;
+    <h4>Windows</h4>
+    <ol>
+        <li>Visita <a href="https://adoptium.net" target="_blank" rel="noopener">adoptium.net</a> i descarrega <strong>Temurin JDK 21</strong> per a Windows.</li>
+        <li>Executa l'instal·lador i deixa les opcions per defecte.</li>
+        <li>Marca l'opció «Establir les variables d'entorn JAVA_HOME».</li>
+        <li>Finalitza l'assistent i obre el <em>Símbol del sistema</em>.</li>
+        <li>Escriu <code>java -version</code>; hauries de veure una sortida similar a:<br><code>openjdk version "21.0.2" 2024-01-16</code></li>
+    </ol>
 
--- Crear un usuari específic (recomanat)
-CREATE USER hibernate_user WITH PASSWORD 'hibernate_pass';
+    <h4>macOS</h4>
+    <ol>
+        <li>Obre Terminal.</li>
+        <li>Si utilitzes Homebrew: <code>brew tap homebrew/cask-versions</code> i després <code>brew install --cask temurin21</code>.</li>
+        <li>Sense Homebrew, descarrega l'instal·lador des d'<a href="https://adoptium.net" target="_blank" rel="noopener">adoptium.net</a> i segueix l'assistent.</li>
+        <li>Verifica la instal·lació amb <code>java -version</code>.</li>
+    </ol>
 
--- Donar permisos
-GRANT ALL PRIVILEGES ON DATABASE botiga_hibernate TO hibernate_user;
+    <h4>Linux (Ubuntu/Debian)</h4>
+    <ol>
+        <li>Obre Terminal i executa:<br><code>sudo apt update</code><br><code>sudo apt install openjdk-21-jdk</code></li>
+        <li>Si el repositori no disposa de la versió 21, afegeix un PPA oficial (vegeu tutorial).</li>
+        <li>Verifica amb <code>java -version</code>.</li>
+    </ol>
 
--- Sortir
-\q
-    {% endcapture %}
-    {% include code-block.html lang="sql" code=code_db_setup %}
+    {% include checklist.html titol="Checklist inicial" elements="JAVA_HOME apunta al directori del JDK 21|La comanda java -version retorna la versió correcta|El PATH inclou les eines del JDK" %}
 
-    {% include exercici.html 
-       nom="Verificació de l'entorn"
-       dificultat="Fàcil"
-       temps="15 min"
-       descripcio="<p>Verifica que tots els components estan instal·lats correctament: Java 21, PostgreSQL funcionant, base de dades botiga_hibernate creada i VS Code amb extensions.</p>"
-       pistes="Usa java --version per verificar Java|Usa psql per verificar PostgreSQL|Connecta't a la base de dades botiga_hibernate"
-    %}
+    {% include prompt-ai.html contingut="Comprova que JAVA_HOME i java -version retornen la configuració esperada al meu sistema (Windows/Mac/Linux). Dona'm un script que pugui executar directament." %}
 
-    {% include prompt-ai.html
-       contingut="M'ajudes a solucionar problemes de connexió amb PostgreSQL? No aconsegueixo connectar-me des de Java, què puc revisar pas a pas per diagnosticar el problema?"
-    %}
+    {% include warning_box.html contingut="No avancis cap als passos de PostgreSQL fins a tenir el JDK configurat i verificat; Hibernate necessita el JDK per arrencar." %}
 </div>
 
 <div class="section">
-    <h2 id="Unitat8_Bloc2_Seccio2">Creació del Projecte Maven</h2>
-    
-    <h3>Generar projecte Maven</h3>
+    <h2 id="Unitat8_Bloc2_Seccio2">Configuració de la base de dades PostgreSQL</h2>
 
-    <p>Podem crear el projecte des de Visual Studio Code o des de la terminal:</p>
+    <p>PostgreSQL serà el servei de bases de dades on Hibernate realitzarà les operacions CRUD. Segueix la guia per instal·lar-lo, ajustar l'autenticació i crear els recursos necessaris.</p>
 
-    {% capture code_maven_create %}
-mvn archetype:generate -DgroupId=com.exemple -DartifactId=hibernate-postgresql-demo -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+    <h3>Instal·lació de PostgreSQL 16</h3>
+
+    <h4>Windows</h4>
+    <ol>
+        <li>Visita <a href="https://www.postgresql.org/download/windows/" target="_blank" rel="noopener">postgresql.org</a> i descarrega l'instal·lador de PostgreSQL 16.</li>
+        <li>Executa l'assistent, seleccionant tots els components (pgAdmin, línia d'ordres, Stack Builder opcional).</li>
+        <li>Defineix una contrasenya per a l'usuari administrador <code>postgres</code> i recorda-la.</li>
+        <li>Deixa el port per defecte (5432) i completa la instal·lació.</li>
+        <li>Verifica l'accés obrint pgAdmin 4 o executant <code>psql -U postgres</code>.</li>
+    </ol>
+
+    <h4>macOS</h4>
+    <ol>
+        <li>Amb Homebrew: <code>brew install postgresql@16</code>.</li>
+        <li>Inicia el servei: <code>brew services start postgresql@16</code>.</li>
+        <li>Alternativament, utilitza l'instal·lador oficial de la web.</li>
+        <li>Comprova la versió amb <code>psql --version</code>.</li>
+    </ol>
+
+    <h4>Linux (Ubuntu/Debian)</h4>
+    <ol>
+        <li>Afegeix el repositori oficial si cal i instal·la:<br><code>sudo apt update</code><br><code>sudo apt install postgresql-16 postgresql-contrib-16</code></li>
+        <li>Inicia el servei: <code>sudo systemctl start postgresql</code></li>
+        <li>Activa l'arrencada automàtica: <code>sudo systemctl enable postgresql</code></li>
+        <li>Verifica l'estat: <code>sudo systemctl status postgresql</code></li>
+    </ol>
+
+    <h3>Autenticació en Linux (error «Peer authentication failed»)</h3>
+    <ol>
+        <li>Localitza <code>pg_hba.conf</code>:<br><code>sudo find /etc/postgresql -name "pg_hba.conf"</code></li>
+        <li>Edita'l (substitueix <code>X.X</code> per la teva versió):<br><code>sudo nano /etc/postgresql/X.X/main/pg_hba.conf</code></li>
+        <li>Canvia els mètodes <code>peer</code>/<code>scram-sha-256</code> per <code>md5</code> en connexions locals:</li>
+    </ol>
+
+    {% capture code_pghba %}
+# TYPE  DATABASE        USER            ADDRESS             METHOD
+local   all             all                                 md5
+host    all             all             127.0.0.1/32        md5
+host    all             all             ::1/128             md5
     {% endcapture %}
-    {% include code-block.html lang="bash" code=code_maven_create %}
+    {% include code-block.html lang="text" code=code_pghba %}
 
-    <p>Això crearà l'estructura següent:</p>
+    <ol start="4">
+        <li>Desa els canvis i reinicia PostgreSQL:<br><code>sudo systemctl restart postgresql</code></li>
+        <li>Torna a provar la connexió:<br><code>psql -U hibuser -d hibernatedb</code></li>
+    </ol>
 
-    {% capture code_estructura %}
-hibernate-postgresql-demo/
+    {% include warning_box.html contingut="Utilitza contrasenyes reals i segures en entorns de producció. En aquest tutorial s'utilitza 'password' només per facilitar la pràctica." %}
+
+    <h3>Creació de l'usuari i base de dades</h3>
+    <p>Executa les ordres següents des de <code>psql</code> amb l'usuari administrador <code>postgres</code>.</p>
+
+    {% capture code_psql %}
+-- Connecta com a superusuari
+psql -U postgres
+
+-- Usuari dedicat al projecte
+CREATE USER hibuser WITH PASSWORD 'password';
+
+-- Base de dades principal
+CREATE DATABASE hibernatedb OWNER hibuser;
+
+-- Atorga permisos addicionals (si cal)
+GRANT ALL PRIVILEGES ON DATABASE hibernatedb TO hibuser;
+
+-- Canvia a la nova base de dades
+\c hibernatedb
+
+-- Concedeix permisos sobre l'esquema
+GRANT ALL ON SCHEMA public TO hibuser;
+    {% endcapture %}
+    {% include code-block.html lang="sql" code=code_psql %}
+
+    <p>Verifica que l'usuari es pot connectar:</p>
+
+    {% capture code_psql_check %}
+psql -h localhost -U hibuser -d hibernatedb -W
+    {% endcapture %}
+    {% include code-block.html lang="bash" code=code_psql_check %}
+
+    {% include success_box.html contingut="Si veus el prompt <code>hibernatedb=></code>, la configuració de PostgreSQL està llesta." %}
+
+    {% include prompt-ai.html contingut="Necessito scripts SQL per inserir dades de prova a la taula productes (nom, preu, stock) un cop creada la base de dades hibernatedb. Escriu-los per PostgreSQL." %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat8_Bloc2_Seccio3">Configuració de Visual Studio Code i extensions</h2>
+
+    <h3>Instal·lació de Visual Studio Code</h3>
+    <ol>
+        <li>Descarrega l'instal·lador corresponent a <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">code.visualstudio.com</a>.</li>
+        <li>Instal·la'l amb permisos d'administrador (Windows) o mou l'app a <code>/Applications</code> (macOS).</li>
+        <li>Obre VS Code i inicia la sessió amb el teu compte per sincronitzar configuracions (opcional).</li>
+    </ol>
+
+    <h3>Extensions imprescindibles</h3>
+    <ul>
+        <li><strong>Extension Pack for Java</strong> (inclou Language Support, Debugger, Test Runner, Maven for Java).</li>
+        <li><strong>Project Manager for Java</strong> (facilita la creació de projectes).</li>
+        <li><strong>Database Client</strong> (o una extensió similar) per consultar PostgreSQL des del mateix editor.</li>
+    </ul>
+
+    {% include info_box.html contingut="Després d'instal·lar l'Extension Pack for Java, VS Code demanarà descarregar els components necessaris. Accepta totes les descàrregues." %}
+
+    <h3>Configurar Maven i el JDK a VS Code</h3>
+    <ol>
+        <li>Obre la paleta de comandes (<code>Ctrl/Cmd + Shift + P</code>) i cerca <em>Preferences: Open Settings (JSON)</em>.</li>
+        <li>Afegeix (o adapta) la configuració següent:</li>
+    </ol>
+
+    {% capture code_settings %}
+{
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "/ruta/al/jdk-21"
+        }
+    ],
+    "maven.executable.path": "/ruta/al/mvn"
+}
+    {% endcapture %}
+    {% include code-block.html lang="json" code=code_settings %}
+
+    {% include prompt-ai.html contingut="Quines opcions de configuració recomanes a VS Code per millorar el rendiment del Java Language Server en projectes Maven grans? Dona'm fragments per afegir a settings.json." %}
+
+    <h3>Connexió a la base de dades des de VS Code</h3>
+    <p>Si instal·les un visor de bases de dades, afegeix una connexió nova amb els paràmetres:</p>
+    <ul>
+        <li><strong>Host:</strong> <code>localhost</code></li>
+        <li><strong>Port:</strong> <code>5432</code></li>
+        <li><strong>Database:</strong> <code>hibernatedb</code></li>
+        <li><strong>User:</strong> <code>hibuser</code></li>
+        <li><strong>Password:</strong> <code>password</code></li>
+    </ul>
+
+    {% include success_box.html contingut="Amb VS Code preparat tens un únic entorn per escriure codi, executar Maven, consultar PostgreSQL i depurar." %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat8_Bloc2_Seccio4">Creació del projecte Maven</h2>
+
+    <p>El tutorial construeix un projecte anomenat <code>hibernate-demo</code> amb paquet base <code>cat.exemple</code>. Crea'l directament des de VS Code o via terminal.</p>
+
+    <h3>Generar l'estructura</h3>
+    <ol>
+        <li>Obre VS Code i prem <strong>Ctrl/Cmd + Shift + P</strong>.</li>
+        <li>Escriu <em>Maven: Create Maven Project</em> i selecciona <em>maven-archetype-quickstart</em>.</li>
+        <li>Escull la versió més recent (1.4 a data del tutorial).</li>
+        <li>Introdueix <strong>cat.exemple</strong> com a <em>Group Id</em>.</li>
+        <li>Introdueix <strong>hibernate-demo</strong> com a <em>Artifact Id</em>.</li>
+        <li>Mantenim la versió <code>1.0-SNAPSHOT</code> (o la que prefereixis).</li>
+        <li>Selecciona el directori on vols crear el projecte i espera a que Maven generi l'esquelet.</li>
+    </ol>
+
+    <h3>Verificació de l'estructura</h3>
+    <p>A l'explorador hauries de veure:</p>
+
+    {% capture code_tree %}
+hibernate-demo/
 ├── pom.xml
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/exemple/
-│   │   │       └── App.java
-│   │   └── resources/
-│   └── test/
-│       └── java/
-│           └── com/exemple/
-│               └── AppTest.java
+├── src
+│   ├── main
+│   │   └── java
+│   │       └── cat
+│   │           └── exemple
+│   │               └── App.java
+│   └── test
+│       └── java
+│           └── cat
+│               └── exemple
+│                   └── AppTest.java
+└── README.md
     {% endcapture %}
-    {% include code-block.html lang="text" code=code_estructura %}
+    {% include code-block.html lang="text" code=code_tree %}
 
-    <h3>Configuració del pom.xml</h3>
+    <p>Substituirem la classe <code>App</code> per <code>Application</code> més endavant. De moment, deixa els fitxers generats.</p>
 
-    <p>Reemplaçar el contingut del <code>pom.xml</code> amb la configuració completa:</p>
+    {% include info_box.html contingut="Si Maven no apareix a la barra lateral, obre la paleta de comandes i executa 'Maven: Reload project'." %}
+
+    {% include prompt-ai.html contingut="Crea un script bash que generi l'estructura del projecte hibernate-demo i col·loqui esquelets buits per a HibernateUtil, Producte, ProducteDAO i Application." %}
+</div>
+
+<div class="section">
+    <h2 id="Unitat8_Bloc2_Seccio5">Configuració de Hibernate</h2>
+
+    <h3>Actualitzar <code>pom.xml</code></h3>
+    <p>Obre el fitxer <code>pom.xml</code> i substitueix el contingut pel fragment del tutorial:</p>
 
     {% capture code_pom %}
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.exemple</groupId>
-    <artifactId>hibernate-postgresql-demo</artifactId>
+    <groupId>cat.exemple</groupId>
+    <artifactId>hibernate-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
-        <hibernate.version>6.2.7.Final</hibernate.version>
-        <postgresql.version>42.6.0</postgresql.version>
+        <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
+        <hibernate.version>6.4.4.Final</hibernate.version>
+        <postgresql.version>42.7.2</postgresql.version>
     </properties>
 
     <dependencies>
@@ -152,18 +287,38 @@ hibernate-postgresql-demo/
             <version>${hibernate.version}</version>
         </dependency>
 
-        <!-- PostgreSQL JDBC Driver -->
+        <!-- Driver JDBC de PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
         </dependency>
 
-        <!-- SLF4J per logging -->
+        <!-- Jakarta Persistence API -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.7</version>
+            <version>2.0.9</version>
+        </dependency>
+
+        <!-- JUnit per als tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -173,134 +328,134 @@ hibernate-postgresql-demo/
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.exemple.Application</mainClass>
+                    <mainClass>cat.exemple.Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 </project>
     {% endcapture %}
-    {% include code-block.html lang="markup" code=code_pom %}
+    {% include code-block.html lang="xml" code=code_pom %}
 
-    <h3>Configuració hibernate.cfg.xml</h3>
+    <ol>
+        <li>Desa el fitxer i accepta l'alerta «Maven project configuration updated».</li>
+        <li>Si no apareix, executa manualment <em>Maven: Update project</em>.</li>
+        <li>Espera a que Maven descarregui totes les dependències (observa la barra d'estat).</li>
+    </ol>
 
-    <p>Crear el fitxer <code>hibernate.cfg.xml</code> dins de <code>src/main/resources/</code>:</p>
+    {% include warning_box.html contingut="Aquest conjunt de versions està testat amb el tutorial. Canviar versions pot introduir incompatibilitats amb Java 21." %}
 
-    {% capture code_hibernate_config %}
-<?xml version="1.0" encoding="UTF-8"?>
+    <h3>Crear <code>hibernate.cfg.xml</code></h3>
+    <ol>
+        <li>Crea la carpeta <code>src/main/resources</code> si no existeix.</li>
+        <li>Afegeix el fitxer <code>hibernate.cfg.xml</code> amb el contingut següent:</li>
+    </ol>
+
+    {% capture code_hibernate_cfg %}
+<?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
-    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
-
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <!-- Configuració de connexió a PostgreSQL -->
-        <property name="hibernate.connection.driver_class">
-            org.postgresql.Driver
-        </property>
-        <property name="hibernate.connection.url">
-            jdbc:postgresql://localhost:5432/botiga_hibernate
-        </property>
-        <property name="hibernate.connection.username">hibernate_user</property>
-        <property name="hibernate.connection.password">hibernate_pass</property>
-        
-        <!-- Configuració del dialecte PostgreSQL -->
-        <property name="hibernate.dialect">
-            org.hibernate.dialect.PostgreSQLDialect
-        </property>
-        
-        <!-- Mostrar SQL generat -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/hibernatedb</property>
+        <property name="hibernate.connection.username">hibuser</property>
+        <property name="hibernate.connection.password">password</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        
-        <!-- Configuració d'esquema -->
-        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.mapping.precedence">class,hbm</property>
+
+        <mapping class="cat.exemple.model.Producte" />
     </session-factory>
 </hibernate-configuration>
     {% endcapture %}
-    {% include code-block.html lang="markup" code=code_hibernate_config %}
+    {% include code-block.html lang="xml" code=code_hibernate_cfg %}
 
-    {% include success_box.html
-       contingut="<strong>Compilar el projecte:</strong><br>
-       Executar <code>mvn clean compile</code> per verificar que tot funciona correctament i descarregar dependències."
-    %}
+    {% include info_box.html contingut="L'opció <code>hibernate.hbm2ddl.auto=update</code> crea o modifica les taules a cada arrencada. En entorns productius utilitza eines de migració." %}
 
-    {% include exercici.html 
-       nom="Configuració Maven"
-       dificultat="Mitjà"
-       temps="25 min"
-       descripcio="<p>Crea el projecte Maven, configura el pom.xml amb les dependències d'Hibernate i PostgreSQL, i crea el fitxer hibernate.cfg.xml. Compila el projecte per verificar que no hi ha errors.</p>"
-    %}
+    {% include prompt-ai.html contingut="Transforma el fitxer hibernate.cfg.xml perquè utilitzi propietats o variables d'entorn quan desplegui a un servidor remots. Dona'm un exemple complet." %}
 </div>
 
 <div class="section">
-    <h2 id="Unitat8_Bloc2_Seccio3">Implementació de Classes</h2>
-    
-    <p>Implementarem les classes necessàries seguint el patró establert: HibernateUtil, entitat Producte, DAO i aplicació principal.</p>
+    <h2 id="Unitat8_Bloc2_Seccio6">Implementació de les classes Java</h2>
 
-    <h3>Classe HibernateUtil</h3>
-    
-    <p>Crear <code>HibernateUtil.java</code> dins del paquet <code>com.exemple.util</code>:</p>
+    <p>Aquesta secció replica els passos exactes del tutorial per construir les classes <code>HibernateUtil</code>, <code>Producte</code>, <code>ProducteDAO</code> i <code>Application</code>. Segueix l'ordre indicat per evitar errors de dependència.</p>
+
+    <h3>Organització de paquets</h3>
+    <p>Crea els paquets següents dins de <code>src/main/java</code>:</p>
+    <ul>
+        <li><code>cat.exemple.util</code></li>
+        <li><code>cat.exemple.model</code></li>
+        <li><code>cat.exemple.dao</code></li>
+    </ul>
+
+    <h3>Classe <code>HibernateUtil</code></h3>
 
     {% capture code_hibernate_util %}
-package com.exemple.util;
+package cat.exemple.util;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+
+import cat.exemple.model.Producte;
 
 public class HibernateUtil {
-    
-    private static SessionFactory sessionFactory;
-    
+    private static final SessionFactory sessionFactory;
+
     static {
-        buildSessionFactory();
-    }
-    
-    private static void buildSessionFactory() {
         try {
             Configuration configuration = new Configuration();
             configuration.configure("hibernate.cfg.xml");
-            
-            StandardServiceRegistryBuilder builder = 
-                new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-            
-            sessionFactory = configuration.buildSessionFactory(builder.build());
-            
-        } catch (Exception e) {
-            System.err.println("Error creant la SessionFactory: " + e.getMessage());
-            throw new ExceptionInInitializerError(e);
+            configuration.addAnnotatedClass(Producte.class);
+
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties())
+                .build();
+
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            System.out.println("Hibernate SessionFactory inicialitzat amb èxit");
+        } catch (Throwable ex) {
+            System.err.println("Error en la inicialització de SessionFactory: " + ex);
+            ex.printStackTrace();
+            throw new ExceptionInInitializerError(ex);
         }
     }
-    
+
     public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            buildSessionFactory();
-        }
         return sessionFactory;
     }
-    
+
     public static void shutdown() {
-        if (sessionFactory != null) {
+        if (sessionFactory != null && !sessionFactory.isClosed()) {
             sessionFactory.close();
+            System.out.println("SessionFactory tancat");
         }
     }
 }
     {% endcapture %}
     {% include code-block.html lang="java" code=code_hibernate_util %}
 
-    <h3>Entitat Producte</h3>
-    
-    <p>Crear <code>Producte.java</code> dins del paquet <code>com.exemple.model</code>:</p>
+    {% include prompt-ai.html contingut="Com puc registrar automàticament totes les classes del paquet cat.exemple.model a Hibernate sense cridar addAnnotatedClass per cadascuna? Dona'm opcions." %}
+
+    <h3>Classe model <code>Producte</code></h3>
 
     {% capture code_producte %}
-package com.exemple.model;
+package cat.exemple.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -308,366 +463,541 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "productes")
 public class Producte {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-    
+
     @Column(name = "nom", nullable = false, length = 100)
     private String nom;
-    
-    @Column(name = "preu", nullable = false, precision = 10, scale = 2)
+
+    @Column(name = "preu", precision = 10, scale = 2)
     private BigDecimal preu;
-    
-    @Column(name = "descripcio", columnDefinition = "TEXT")
-    private String descripcio;
-    
-    // Constructors
-    public Producte() {}
-    
-    public Producte(String nom, BigDecimal preu) {
+
+    @Column(name = "stock")
+    private Integer stock;
+
+    public Producte() {
+    }
+
+    public Producte(String nom, BigDecimal preu, Integer stock) {
         this.nom = nom;
         this.preu = preu;
+        this.stock = stock;
     }
-    
-    public Producte(String nom, BigDecimal preu, String descripcio) {
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
         this.nom = nom;
-        this.preu = preu;
-        this.descripcio = descripcio;
     }
-    
-    // Getters i Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
-    
-    public BigDecimal getPreu() { return preu; }
-    public void setPreu(BigDecimal preu) { this.preu = preu; }
-    
-    public String getDescripcio() { return descripcio; }
-    public void setDescripcio(String descripcio) { this.descripcio = descripcio; }
-    
+
+    public BigDecimal getPreu() {
+        return preu;
+    }
+
+    public void setPreu(BigDecimal preu) {
+        this.preu = preu;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
     @Override
     public String toString() {
-        return "Producte{id=" + id + ", nom='" + nom + "', preu=" + preu + "}";
+        return "Producte [id=" + id + ", nom=" + nom + ", preu=" + preu + ", stock=" + stock + "]";
     }
 }
     {% endcapture %}
     {% include code-block.html lang="java" code=code_producte %}
 
-    <h3>Classe ProducteDAO</h3>
+    {% include info_box.html contingut="El model utilitza anotacions de Jakarta Persistence (JPA 3). Això assegura compatibilitat amb Hibernate 6." %}
+
+    <h3>Classe DAO <code>ProducteDAO</code></h3>
 
     {% capture code_producte_dao %}
-package com.exemple.dao;
+package cat.exemple.dao;
 
-import com.exemple.model.Producte;
-import com.exemple.util.HibernateUtil;
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import java.util.List;
+import cat.exemple.model.Producte;
+import cat.exemple.util.HibernateUtil;
 
 public class ProducteDAO {
-    
-    public void guardarProducte(Producte producte) {
+
+    /**
+     * Desa un producte a la base de dades i retorna l'identificador generat.
+     */
+    public Long save(Producte producte) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.persist(producte);
+            Long id = (Long) session.save(producte);
             transaction.commit();
-            System.out.println("Producte guardat: " + producte);
+            return id;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.err.println("Error guardant producte: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
-    
-    public Producte trobarProducte(Long id) {
+
+    /**
+     * Obté un producte pel seu identificador.
+     */
+    public Producte getById(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(Producte.class, id);
         } catch (Exception e) {
-            System.err.println("Error trobant producte: " + e.getMessage());
-            return null;
+            e.printStackTrace();
+            throw e;
         }
     }
-    
-    public List<Producte> obtenirTotsElsProductes() {
+
+    /**
+     * Retorna tots els productes.
+     */
+    public List<Producte> getAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Producte> query = session.createQuery("FROM Producte", Producte.class);
-            return query.getResultList();
+            Query<Producte> query = session.createQuery("from Producte", Producte.class);
+            return query.list();
         } catch (Exception e) {
-            System.err.println("Error obtenint productes: " + e.getMessage());
-            return List.of();
+            e.printStackTrace();
+            throw e;
         }
     }
-    
-    public void actualitzarProducte(Producte producte) {
+
+    /**
+     * Actualitza un producte existent.
+     */
+    public void update(Producte producte) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.merge(producte);
-            transaction.commit();
-            System.out.println("Producte actualitzat: " + producte);
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            System.err.println("Error actualitzant producte: " + e.getMessage());
-        }
-    }
-    
-    public void eliminarProducte(Long id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            
-            Producte producte = session.get(Producte.class, id);
-            if (producte != null) {
-                session.remove(producte);
-                System.out.println("Producte eliminat: " + producte);
-            } else {
-                System.out.println("No s'ha trobat producte amb ID: " + id);
-            }
-            
+            session.update(producte);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.err.println("Error eliminant producte: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Elimina un producte.
+     */
+    public void delete(Producte producte) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.delete(producte);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Cerca productes pel nom.
+     */
+    public List<Producte> findByName(String nom) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Producte> query = session.createQuery("from Producte where nom like :nom", Producte.class);
+            query.setParameter("nom", "%" + nom + "%");
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 }
     {% endcapture %}
     {% include code-block.html lang="java" code=code_producte_dao %}
 
-    {% include warning_box.html
-       contingut="<strong>Important:</strong> Actualitzar el hibernate.cfg.xml per afegir el mapatge de la classe Producte:<br>
-       <code>&lt;mapping class=&quot;com.exemple.model.Producte&quot;/&gt;</code>"
-    %}
+    {% include warning_box.html contingut="Hibernate 6 introdueix nous mètodes (persist/merge/remove). El tutorial manté save/update/delete per simplicitat, però tingues-ho present per a projectes avançats." %}
 
-    {% include exercici.html 
-       nom="Implementació de classes"
-       dificultat="Mitjà"
-       temps="40 min"
-       descripcio="<p>Implementa totes les classes: HibernateUtil, Producte (entitat), ProducteDAO amb operacions CRUD. Recorda afegir el mapatge al hibernate.cfg.xml.</p>"
-       pistes="Crea els paquets: util, model, dao|Usa anotacions JPA a l'entitat|Try-with-resources per sessions|Afegeix mapping al hibernate.cfg.xml"
-    %}
-
-    {% include prompt-ai.html
-       contingut="M'expliques pas a pas com debugar errors comuns quan implemento el DAO? Per exemple, si em surt 'Unknown entity' o problemes amb transaccions."
-    %}
-</div>
-
-<div class="section">
-    <h2 id="Unitat8_Bloc2_Seccio4">Execució i Proves</h2>
-    
-    <h3>Classe Application Principal</h3>
-    
-    <p>Crear <code>Application.java</code> dins del paquet <code>com.exemple</code>:</p>
+    <h3>Classe principal <code>Application</code></h3>
 
     {% capture code_application %}
-package com.exemple;
-
-import com.exemple.dao.ProducteDAO;
-import com.exemple.model.Producte;
-import com.exemple.util.HibernateUtil;
+package cat.exemple;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import cat.exemple.dao.ProducteDAO;
+import cat.exemple.model.Producte;
+import cat.exemple.util.HibernateUtil;
+
 public class Application {
-    
+    private static final ProducteDAO producteDAO = new ProducteDAO();
+
     public static void main(String[] args) {
-        
-        System.out.println("=== Inici de l'aplicació Hibernate ===");
-        
-        ProducteDAO producteDAO = new ProducteDAO();
-        
         try {
-            // 1. Crear i guardar productes
-            System.out.println("\n1. CREANT PRODUCTES...");
-            crearProductes(producteDAO);
-            
-            // 2. Llegir tots els productes
-            System.out.println("\n2. LLEGINT TOTS ELS PRODUCTES...");
-            llegirTotsElsProductes(producteDAO);
-            
-            // 3. Buscar producte per ID
-            System.out.println("\n3. BUSCANT PRODUCTE PER ID...");
-            buscarProductePerID(producteDAO, 1L);
-            
-            // 4. Actualitzar producte
-            System.out.println("\n4. ACTUALITZANT PRODUCTE...");
-            actualitzarProducte(producteDAO);
-            
-            // 5. Eliminar producte
-            System.out.println("\n5. ELIMINANT PRODUCTE...");
-            eliminarProducte(producteDAO, 2L);
-            
-            // 6. Verificar eliminació
-            System.out.println("\n6. VERIFICANT ELIMINACIÓ...");
-            llegirTotsElsProductes(producteDAO);
-            
+            System.out.println("Iniciant aplicació Hibernate amb PostgreSQL...");
+
+            crearProductes();
+            mostrarTotsElsProductes();
+            actualitzarProducte();
+            cercarProductesPerNom("por");
+            eliminarProducte();
+            mostrarTotsElsProductes();
+
+            System.out.println("Fi de l'aplicació");
         } catch (Exception e) {
             System.err.println("Error en l'aplicació: " + e.getMessage());
             e.printStackTrace();
         } finally {
             HibernateUtil.shutdown();
-            System.out.println("\n=== Fi de l'aplicació ===");
         }
     }
-    
-    private static void crearProductes(ProducteDAO dao) {
-        Producte p1 = new Producte("Teclat Gaming RGB", new BigDecimal("89.99"), 
-                                   "Teclat mecànic amb switches Cherry MX");
-        Producte p2 = new Producte("Ratolí Òptic", new BigDecimal("34.50"), 
-                                   "Ratolí òptic d'alta precisió");
-        Producte p3 = new Producte("Monitor 24\"", new BigDecimal("199.00"), 
-                                   "Monitor LED Full HD 1920x1080");
-        
-        dao.guardarProducte(p1);
-        dao.guardarProducte(p2);
-        dao.guardarProducte(p3);
+
+    private static void crearProductes() {
+        System.out.println("\n=== Creant productes ===");
+        Producte p1 = new Producte("Portàtil XPS", new BigDecimal("1299.99"), 10);
+        Producte p2 = new Producte("Teclat Mecànic", new BigDecimal("89.99"), 25);
+        Producte p3 = new Producte("Ratolí Gaming", new BigDecimal("49.99"), 30);
+
+        producteDAO.save(p1);
+        producteDAO.save(p2);
+        producteDAO.save(p3);
+        System.out.println("Productes creats amb èxit");
     }
-    
-    private static void llegirTotsElsProductes(ProducteDAO dao) {
-        List<Producte> productes = dao.obtenirTotsElsProductes();
-        System.out.println("Total productes: " + productes.size());
-        productes.forEach(System.out::println);
-    }
-    
-    private static void buscarProductePerID(ProducteDAO dao, Long id) {
-        Producte producte = dao.trobarProducte(id);
-        if (producte != null) {
-            System.out.println("Producte trobat: " + producte);
+
+    private static void mostrarTotsElsProductes() {
+        System.out.println("\n=== Tots els productes ===");
+        List<Producte> productes = producteDAO.getAll();
+        if (productes.isEmpty()) {
+            System.out.println("No hi ha productes a la base de dades.");
         } else {
-            System.out.println("No trobat producte amb ID: " + id);
+            for (Producte p : productes) {
+                System.out.println(p);
+            }
         }
     }
-    
-    private static void actualitzarProducte(ProducteDAO dao) {
-        Producte producte = dao.trobarProducte(1L);
-        if (producte != null) {
-            producte.setPreu(new BigDecimal("79.99"));
-            producte.setDescripcio("Teclat RGB Cherry MX Blue - OFERTA!");
-            dao.actualitzarProducte(producte);
+
+    private static void actualitzarProducte() {
+        System.out.println("\n=== Actualitzant producte ===");
+        List<Producte> productes = producteDAO.getAll();
+        if (!productes.isEmpty()) {
+            Producte producte = productes.get(0);
+            System.out.println("Producte abans d'actualitzar: " + producte);
+
+            producte.setPreu(new BigDecimal("1199.99"));
+            producte.setStock(producte.getStock() - 2);
+            producteDAO.update(producte);
+
+            producte = producteDAO.getById(producte.getId());
+            System.out.println("Producte després d'actualitzar: " + producte);
+        } else {
+            System.out.println("No hi ha productes per actualitzar.");
         }
     }
-    
-    private static void eliminarProducte(ProducteDAO dao, Long id) {
-        dao.eliminarProducte(id);
+
+    private static void cercarProductesPerNom(String nom) {
+        System.out.println("\n=== Cercant productes amb nom que contingui '" + nom + "' ===");
+        List<Producte> productes = producteDAO.findByName(nom);
+        if (productes.isEmpty()) {
+            System.out.println("Cap producte trobat amb el nom '" + nom + "'");
+        } else {
+            for (Producte p : productes) {
+                System.out.println(p);
+            }
+        }
+    }
+
+    private static void eliminarProducte() {
+        System.out.println("\n=== Eliminant producte ===");
+        List<Producte> productes = producteDAO.getAll();
+        if (!productes.isEmpty()) {
+            Producte producteAEliminar = productes.get(productes.size() - 1);
+            System.out.println("Eliminant: " + producteAEliminar);
+            producteDAO.delete(producteAEliminar);
+            System.out.println("Producte eliminat");
+        } else {
+            System.out.println("No hi ha productes per eliminar.");
+        }
     }
 }
     {% endcapture %}
     {% include code-block.html lang="java" code=code_application %}
 
-    <h3>Executar l'aplicació</h3>
+    <h3>Fitxer de test <code>AppTest</code></h3>
+    <ol>
+        <li>Obre <code>src/test/java/cat/exemple/AppTest.java</code>.</li>
+        <li>Confirma que conté:</li>
+    </ol>
 
-    <p>Pots executar l'aplicació de diferents maneres:</p>
+    {% capture code_apptest %}
+package cat.exemple;
 
-    {% capture code_execution %}
-# Opció 1: Maven
-mvn clean compile exec:java
+import static org.junit.Assert.assertTrue;
 
-# Opció 2: Compilar i executar manualment
-mvn clean package
-java -cp target/classes:target/dependency/* com.exemple.Application
+import org.junit.Test;
+
+public class AppTest {
+    @Test
+    public void shouldAnswerWithTrue() {
+        assertTrue(true);
+    }
+}
     {% endcapture %}
-    {% include code-block.html lang="bash" code=code_execution %}
+    {% include code-block.html lang="java" code=code_apptest %}
 
-    <h3>Sortida esperada</h3>
-
-    {% include success_box.html
-       contingut="Si tot funciona correctament, veuràs:<br>
-       • Creació automàtica de la taula 'productes'<br>
-       • SQL generat per cada operació<br>
-       • Missatges de confirmació per cada acció<br>
-       • Resultats de les consultes"
-    %}
-
-    <h3>Verificació a PostgreSQL</h3>
-
-    {% capture code_verificacio_db %}
--- Connectar-se a la base de dades
-psql -U hibernate_user -d botiga_hibernate -h localhost
-
--- Veure estructura de la taula
-\d productes
-
--- Consultar dades
-SELECT * FROM productes;
-    {% endcapture %}
-    {% include code-block.html lang="sql" code=code_verificacio_db %}
-
-    <h3>Resolució de problemes comuns</h3>
-
-    {% include error.html
-       titol="Error: Could not create connection to database server"
-       descripcio="<p>Problema de connexió amb PostgreSQL.</p>"
-       solucio="<ul>
-                <li>Verificar que PostgreSQL està executant-se</li>
-                <li>Comprovar credencials al hibernate.cfg.xml</li>
-                <li>Verificar que la base de dades existeix</li>
-                </ul>"
-    %}
-
-    {% include error.html
-       titol="Error: Unknown entity"
-       descripcio="<p>Hibernate no troba la classe d'entitat.</p>"
-       solucio="<ul>
-                <li>Afegir &lt;mapping class=&quot;com.exemple.model.Producte&quot;/&gt; al hibernate.cfg.xml</li>
-                <li>Verificar que les anotacions JPA són correctes</li>
-                <li>Comprovar el nom complet de la classe</li>
-                </ul>"
-    %}
-
-    {% include exercici.html 
-       nom="Aplicació completa"
-       dificultat="Fàcil"
-       temps="30 min"
-       descripcio="<p>Executa l'aplicació completa, verifica que funciona correctament, comprova els resultats a PostgreSQL i prova a afegir un producte addicional.</p>"
-       pistes="Executa amb mvn compile exec:java|Verifica la sortida pas a pas|Connecta't a PostgreSQL per veure dades|Prova a modificar i tornar executar"
-    %}
-
-    {% include prompt-ai.html
-       contingut="Com puc estendre aquesta aplicació per afegir més funcionalitats? Per exemple, categories, cerques avançades o una interfície web simple?"
-    %}
+    {% include prompt-ai.html contingut="Vull afegir tests unitats per ProducteDAO utilitzant una base de dades en memòria (H2). Especifica quines dependències i configuracions haig d'afegir i entrega'm un exemple de test." %}
 </div>
 
 <div class="section">
-    <h2>Materials Complementaris</h2>
-    
-    {% include info_box.html
-       contingut="<strong>Prompts d'IA i activitats específiques:</strong><br>
-       Trobaràs prompts d'IA personalitzats per diferents nivells d'estudiants i activitats pràctiques detallades als materials complementaris d'aquest bloc."
+    <h2 id="Unitat8_Bloc2_Seccio7">Compilació, proves i execució final</h2>
+
+    <h3>Compilació i execució de Maven</h3>
+    <ol>
+        <li>Obre la barra lateral de Maven a VS Code.</li>
+        <li>Executa <code>clean</code> i després <code>compile</code> (clic dret → <em>Run</em>).</li>
+        <li>Comprova la consola: ha d'aparèixer <strong>BUILD SUCCESS</strong>.</li>
+    </ol>
+
+    {% capture code_maven_clean_compile %}
+mvn clean
+mvn compile
+    {% endcapture %}
+    {% include code-block.html lang="bash" code=code_maven_clean_compile %}
+
+    <h3>Execució dels tests JUnit</h3>
+    <ol>
+        <li>Al menú Maven → Lifecycle, executa <code>test</code>.</li>
+        <li>Alternativament, obre <code>AppTest.java</code> i fes clic a <em>Run Test</em>.</li>
+        <li>Confirma que els tests acaben amb <strong>BUILD SUCCESS</strong>.</li>
+    </ol>
+
+    <h3>Execució de l'aplicació</h3>
+    <ol>
+        <li>Assegura't que el servei PostgreSQL està actiu.</li>
+        <li>Executa el plugin <code>exec:java</code> (Plugins → exec → exec:java → Run).</li>
+        <li>O bé, obre <code>Application.java</code> i fes clic al botó <em>Run</em>.</li>
+        <li>Observa els logs d'Hibernate: es mostraran les consultes SQL generades.</li>
+    </ol>
+
+    {% capture code_maven_exec %}
+mvn exec:java -Dexec.mainClass="cat.exemple.Application"
+    {% endcapture %}
+    {% include code-block.html lang="bash" code=code_maven_exec %}
+
+    <h3>Verificació a PostgreSQL</h3>
+    <ol>
+        <li>Connecta't: <code>psql -U hibuser -d hibernatedb</code>.</li>
+        <li>Llista les taules amb <code>\dt</code>.</li>
+        <li>Consulta el contingut: <code>SELECT * FROM productes;</code></li>
+        <li>Confirma que els registres coincideixen amb els mostrats per l'aplicació (incloent l'actualització i l'eliminació).</li>
+    </ol>
+
+    {% capture code_psql_verify %}
+psql -h localhost -U hibuser -d hibernatedb -W
+\dt
+SELECT * FROM productes;
+\q
+    {% endcapture %}
+    {% include code-block.html lang="sql" code=code_psql_verify %}
+
+    <h3>Visor de bases de dades a VS Code</h3>
+    <ol>
+        <li>Obre l'extensió de Base de Dades instal·lada.</li>
+        <li>Crea una connexió nova amb les credencials del tutorial.</li>
+        <li>Explora la taula <code>productes</code> i actualitza-la després d'executar l'aplicació per veure els canvis en temps real.</li>
+    </ol>
+
+    <h3>Solució de problemes comuns</h3>
+    {% include checklist.html titol="Diagnòstic ràpid" elements="PostgreSQL en execució (servei actiu)|Credencials correctes a hibernate.cfg.xml|Autenticació Linux configurada a md5|Dependències Maven descarregades sense errors" %}
+
+    <h4>Problemes de connexió</h4>
+    <ul>
+        <li>Comprova <code>hibernate.cfg.xml</code> (URL, usuari, contrasenya).</li>
+        <li>Intenta connectar-te manualment amb <code>psql</code>.</li>
+        <li>En Windows, assegura't que el directori <code>PostgreSQL\bin</code> és al PATH.</li>
+    </ul>
+
+    <h4>Errors d'autenticació en Linux</h4>
+    <ul>
+        <li>Revisa <code>pg_hba.conf</code> i canvia a <code>md5</code>.</li>
+        <li>Reinicia el servei: <code>sudo systemctl restart postgresql</code>.</li>
+    </ul>
+
+    <h4>Problemes amb Maven o VS Code</h4>
+    <ul>
+        <li>Executa <em>Maven: Clean</em> i <em>Maven: Update project</em>.</li>
+        <li>Si hi ha errors d'import, comprova que el <code>pom.xml</code> està guardat i sense conflictes.</li>
+    </ul>
+    <h4>Problemes amb els tests</h4>
+    <ul>
+        <li>Confirma que la dependència de JUnit (4.13.2) és present al <code>pom.xml</code>.</li>
+        <li>Actualitza el projecte Maven després d'afegir la dependència.</li>
+        <li>Verifica que el paquet del test sigui <code>cat.exemple</code> i que la classe <code>AppTest</code> importi les classes correctes.</li>
+        <li>Executa els tests des de la línia d'ordres amb <code>mvn test</code> per veure el traç complet.</li>
+    </ul>
+
+    <h4>Problemes amb Hibernate</h4>
+    <ul>
+        <li>Activa <code>&lt;property name="hibernate.use_sql_comments"&gt;true&lt;/property&gt;</code> per obtenir logs més descriptius.</li>
+        <li>Revisa que totes les classes anotades estan registrades a <code>HibernateUtil</code> i al fitxer de configuració.</li>
+        <li>Si hi ha conflictes d'esquema, canvia temporalment <code>hibernate.hbm2ddl.auto</code> a <code>create</code> i torna a <code>update</code> un cop resolt.</li>
+        <li>Buida la base de dades o ajusta les dades d'entrada quan es produeixin errors de restriccions (per exemple, columnes úniques).</li>
+    </ul>
+
+    <h3>Activitat d'ampliació</h3>
+    {% include exercici.html
+       nom="Afegeix l'entitat Categoria"
+       dificultat="Mitjana"
+       temps="25 min"
+       descripcio="<p>Crea la classe <code>Categoria</code> amb relació <em>One-to-Many</em> a <code>Producte</code>. Actualitza <code>Producte</code>, registra la classe a Hibernate i estèn <code>Application</code> perquè mostri la categoria a cada producte.</p>"
+       pistes="Declara @OneToMany i @ManyToOne amb les anotacions corresponents|Afegeix la nova entitat a HibernateUtil i al fitxer hibernate.cfg.xml|Crea un mètode al DAO per llistar productes agrupats per categoria"
     %}
 
-    <h3>Per a estudiants amb dificultats</h3>
-    
-    <p>Si tens problemes seguint el tutorial, prova aquests prompts amb una IA:</p>
+    {% capture solucio_categoria_text %}
+<ul>
+    <li>Defineix <code>Categoria</code> amb <code>@OneToMany(mappedBy="categoria")</code> i registra-la a Hibernate.</li>
+    <li>Actualitza <code>Producte</code> per afegir <code>@ManyToOne</code> i la columna <code>categoria_id</code>.</li>
+    <li>Ajusta <code>HibernateUtil</code> i <code>hibernate.cfg.xml</code> per incloure la nova entitat.</li>
+    <li>Extén <code>Application</code> per crear categories i associar-les als productes abans de llistar-los.</li>
+</ul>
+    {% endcapture %}
+    {% capture solucio_categoria_code %}
+// src/main/java/cat/exemple/model/Categoria.java
+package cat.exemple.model;
 
-    {% include prompt-ai.html
-       contingut="He seguit el tutorial d'Hibernate pas a pas, però em surt aquest error: [COPIA AQUÍ EL TEU ERROR]. Pots ajudar-me a entendre què vol dir aquest error en paraules simples i com puc solucionar-ho pas a pas?"
-    %}
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-    {% include prompt-ai.html
-       contingut="Pots explicar-me línia per línia què fa aquest codi del ProducteDAO? Especialment vull entendre per què servo la Transaction i què passa si no faig rollback: [COPIA AQUÍ EL CODI]"
-    %}
+@Entity
+@Table(name = "categories")
+public class Categoria {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    <h3>Per a estudiants avançats</h3>
+    @Column(nullable = false, length = 80, unique = true)
+    private String nom;
 
-    {% include prompt-ai.html
-       contingut="He completat el tutorial bàsic d'Hibernate. Com podria estendre'l per implementar una arquitectura més robusta amb Repository pattern, Service Layer, gestió d'excepcions personalitzada i testing amb Testcontainers?"
-    %}
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Producte> productes = new ArrayList<>();
 
-    {% include prompt-ai.html
-       contingut="Vull optimitzar l'aplicació del tutorial per millorar el rendiment. Mostra'm com implementar cache de segon nivell, batch operations, lazy loading estratègic i monitoring de performance amb Hibernate Statistics."
-    %}
+    public Categoria() {}
+
+    public Categoria(String nom) {
+        this.nom = nom;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public List<Producte> getProductes() {
+        return productes;
+    }
+}
+
+// Afegir al fitxer Producte.java
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "categoria_id")
+private Categoria categoria;
+
+public Categoria getCategoria() {
+    return categoria;
+}
+
+public void setCategoria(Categoria categoria) {
+    this.categoria = categoria;
+}
+
+// HibernateUtil.java
+configuration.addAnnotatedClass(Categoria.class);
+
+// hibernate.cfg.xml
+<mapping class="cat.exemple.model.Categoria" />
+
+// Application.java (fragment)
+Categoria tecnologia = new Categoria("Tecnologia");
+Categoria periferiques = new Categoria("Perifèrics");
+
+Producte p1 = new Producte("Portàtil XPS", new BigDecimal("1299.99"), 10);
+p1.setCategoria(tecnologia);
+Producte p2 = new Producte("Teclat Mecànic", new BigDecimal("89.99"), 25);
+p2.setCategoria(periferiques);
+
+producteDAO.save(p1);
+producteDAO.save(p2);
+    {% endcapture %}
+    <details class="solution-toggle">
+        <summary>Mostra la solució orientativa</summary>
+        {% include solucio.html contingut=solucio_categoria_text %}
+        {% include code-block.html lang="java" code=solucio_categoria_code %}
+    </details>
+
+    <h4>Utilització de consultes més complexes</h4>
+    <ul>
+        <li>Afegeix mètodes a <code>ProducteDAO</code> utilitzant la Criteria API o consultes HQL amb <code>ORDER BY</code>, filtres i agregacions.</li>
+        <li>Experimenta amb <code>JOIN FETCH</code> per carregar categories i productes en una sola consulta.</li>
+        <li>Analitza el rendiment activant <code>show_sql</code> i els comentaris SQL.</li>
+    </ul>
+
+    <h4>Afegir una interfície d'usuari</h4>
+    <ul>
+        <li>Afegeix dependències de JavaFX o Swing al <code>pom.xml</code> per construir una UI d'escriptori.</li>
+        <li>Crea pantalles per llistar productes, afegir-ne de nous i actualitzar-ne el preu.</li>
+        <li>Centralitza la lògica a la capa de servei per mantenir la UI desacoblada.</li>
+    </ul>
+
+    <h3>Resum final</h3>
+    <p>Has completat un projecte funcional amb Hibernate 6, PostgreSQL i Maven:</p>
+    <ul>
+        <li>Instal·lació i configuració de totes les eines necessàries.</li>
+        <li>Creació d'un projecte Maven estructurat.</li>
+        <li>Configuració d'Hibernate i implementació de la capa de persistència.</li>
+        <li>Execució de CRUD complet i verificació directament a PostgreSQL.</li>
+        <li>Diagnòstic dels errors més habituals i suggeriments d'ampliació.</li>
+    </ul>
+
+    {% include prompt-ai.html contingut="Proposa nous casos d'ús (per exemple comandes i factures) i descriu quines entitats, DAOs i relacions hauria d'afegir per suportar-los amb Hibernate 6." %}
+
+    <h3>Referències i recursos</h3>
+    <ul>
+        <li><a href="https://hibernate.org/orm/documentation/" target="_blank" rel="noopener">Documentació oficial d'Hibernate ORM</a></li>
+        <li><a href="https://www.postgresql.org/docs/" target="_blank" rel="noopener">Manual oficial de PostgreSQL</a></li>
+        <li><a href="https://code.visualstudio.com/docs/java/java-tutorial" target="_blank" rel="noopener">Guia de Java a Visual Studio Code</a></li>
+    </ul>
+
+    {% include success_box.html contingut="Amb el tutorial completat tens una base sòlida per abordar RA8 i RA9 i construir aplicacions empresarials amb Hibernate." %}
 </div>
