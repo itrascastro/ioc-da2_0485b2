@@ -749,13 +749,17 @@ body.quadern-layout {
   align-items: center;
   gap: 6px;
   color: var(--color-text-muted);
+  font-size: 0.78rem;
   line-height: 1; /* centrat vertical millor amb icones */
 }
 
 .stat-item i {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
 }
 
 .footer-version {
