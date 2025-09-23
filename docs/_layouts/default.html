@@ -94,10 +94,12 @@
         <!-- Sidebar Navegació -->
         {% if page.sidebar %}
         <aside class="sidebar">
-            <!-- Contingut d'aquest Bloc -->
-            <div class="sidebar-section">
-                <h3>Contingut del Bloc</h3>
-                {% include toc.html %}
+            <div class="sidebar-scroll">
+                <!-- Contingut d'aquest Bloc -->
+                <div class="sidebar-section">
+                    <h3>Contingut del Bloc</h3>
+                    {% include toc.html %}
+                </div>
             </div>
         </aside>
         {% endif %}

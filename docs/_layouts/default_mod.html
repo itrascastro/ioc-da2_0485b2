@@ -81,9 +81,11 @@
         <div class="site-body">
             {% if page.sidebar %}
             <aside class="site-sidebar">
-                <div class="sidebar-section">
-                    <h3>Contingut del Bloc</h3>
-                    {% include toc.html %}
+                <div class="sidebar-scroll">
+                    <div class="sidebar-section">
+                        <h3>Contingut del Bloc</h3>
+                        {% include toc.html %}
+                    </div>
                 </div>
             </aside>
             {% endif %}
@@ -231,4 +233,3 @@
     </script>
 </body>
 </html>
-
