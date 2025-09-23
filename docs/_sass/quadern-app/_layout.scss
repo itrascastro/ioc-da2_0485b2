@@ -744,7 +744,7 @@ body.quadern-layout {
   gap: 14px;
 }
 
-.stat-item {
+.stats-container .stat-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -753,7 +753,7 @@ body.quadern-layout {
   line-height: 1; /* centrat vertical millor amb icones */
 }
 
-.stat-item i {
+.stats-container .stat-item i {
   font-size: 0.85rem;
   display: inline-flex;
   align-items: center;
