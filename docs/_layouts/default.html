@@ -60,40 +60,51 @@
     <!-- Header fix -->
     <header class="header" role="banner" id="top">
         <div class="header-brand">
-            <a href="{{ '/' | relative_url }}" class="logo-link">
-                <img src="{{ '/assets/images/logo_IOC_light.jpg' | relative_url }}" 
-                     alt="Institut Obert de Catalunya" 
-                     class="logo logo-light">
-                <img src="{{ '/assets/images/logo_IOC_dark.png' | relative_url }}" 
-                     alt="Institut Obert de Catalunya" 
-                     class="logo logo-dark">
+            <a href="{{ '/' | relative_url }}" class="logo-link" aria-label="Inici">
+                <img src="{{ '/assets/images/logo_IOC_light.jpg' | relative_url }}" alt="Institut Obert de Catalunya" class="logo logo-light">
+                <img src="{{ '/assets/images/logo_IOC_dark.png' | relative_url }}" alt="Institut Obert de Catalunya" class="logo logo-dark">
             </a>
             <a href="{{ '/' | relative_url }}" class="title-link">
                 <h1>{{ site.cicle_modul }} - {{ site.title }}</h1>
             </a>
         </div>
-        <div class="header-controls">
-            <div class="nav-dropdown" id="nav-dropdown">
-                <button class="nav-dropdown-btn" id="nav-dropdown-btn">Navegació</button>
-                <div class="nav-dropdown-content" id="nav-dropdown-content">
-                    <a href="{{ '/' | relative_url }}" class="nav-dropdown-item {% if page.url == '/' %}current{% endif %}">Índex del Curs</a>
-                    {% for unitat in site.curs.unitats %}
-                        {% for bloc in unitat.blocs %}
-                            <a href="{{ bloc.url | relative_url }}" class="nav-dropdown-item {% if page.url == bloc.url %}current{% endif %}">
-                                Unitat {{ unitat.numero }} - Bloc {{ bloc.numero }}: {{ bloc.nom }}
-                            </a>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-            </div>
+        <div class="header-actions">
             <button class="theme-toggle" id="theme-toggle">Mode Fosc</button>
+            <button class="nav-panel-toggle" type="button" aria-expanded="false" aria-label="Obre la navegació">
+                <i class="bi bi-list" aria-hidden="true"></i>
+                <span class="nav-panel-label">Navegació</span>
+            </button>
         </div>
     </header>
+
+    <div class="offcanvas-backdrop" hidden></div>
+    <nav class="offcanvas-nav" aria-hidden="true" aria-label="Navegació del curs">
+        <div class="offcanvas-header">
+            <h2 class="offcanvas-title">Navegació</h2>
+            <button class="offcanvas-close" type="button" aria-label="Tanca la navegació">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            <a href="{{ '/' | relative_url }}" class="nav-dropdown-item {% if page.url == '/' %}current{% endif %}">Índex del Curs</a>
+            {% for unitat in site.curs.unitats %}
+                {% for bloc in unitat.blocs %}
+                    <a href="{{ bloc.url | relative_url }}" class="nav-dropdown-item {% if page.url == bloc.url %}current{% endif %}">
+                        Unitat {{ unitat.numero }} - Bloc {{ bloc.numero }}: {{ bloc.nom }}
+                    </a>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </nav>
 
     <div class="container">
         <!-- Sidebar Navegació -->
         {% if page.sidebar %}
         <aside class="sidebar">
+            <button class="sidebar-toggle" type="button" aria-expanded="false">
+                <span>Contingut del bloc</span>
+                <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
             <div class="sidebar-scroll">
                 <!-- Contingut d'aquest Bloc -->
                 <div class="sidebar-section">
@@ -293,7 +304,10 @@
                   {%- endif -%}
                 {%- endif -%}
             </div>
-            <div class="footer-actions">
+            <div class="footer-actions" aria-label="Accions ràpides">
+                <button class="task-btn footer-collapse-toggle" type="button" aria-expanded="true" aria-label="Amaga el peu de pàgina">
+                  <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                </button>
                 <a href="#top" id="footer-btn-top" class="task-btn" aria-label="Anar a l'inici">↑</a>
                 <a href="#bottom" id="footer-btn-bottom" class="task-btn" aria-label="Anar al final">↓</a>
                 <a href="#next" id="footer-btn-next" class="task-btn" aria-label="Secció següent">→</a>

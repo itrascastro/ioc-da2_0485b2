@@ -9,6 +9,73 @@
   padding-right: 8px;
   scrollbar-gutter: stable;
 }
+
+.sidebar-toggle {
+  display: none;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.sidebar-toggle i {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.sidebar.is-collapsible {
+  width: 100%;
+  position: static;
+}
+
+.sidebar.is-collapsible .sidebar-toggle {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.sidebar.is-collapsible .sidebar-scroll {
+  display: none;
+  padding-right: 0;
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
+.sidebar.is-collapsible .sidebar-section {
+  margin-bottom: 0;
+}
+
+.sidebar.is-collapsible.is-open .sidebar-scroll {
+  display: block;
+}
+
+.sidebar.is-open .sidebar-toggle i {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 1024px) {
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  .sidebar-scroll {
+    margin-top: 12px;
+  }
+}
 .sidebar-section { background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--border-radius); padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-light); }
 .sidebar-section:last-child { margin-bottom: 0; }
 .sidebar-section h3 { margin: 0 0 15px 0; font-size: 1rem; color: var(--color-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 8px; }
