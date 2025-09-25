@@ -113,6 +113,43 @@
   .table-responsive table {
     min-width: 520px;
   }
+
+  .content-body .section > h2 {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .content-body .section > h2 .add-note-btn {
+    position: static;
+    transform: none;
+    width: 26px;
+    height: 26px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .content-body .section > h2 span,
+  .content-body .section > h2 {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 20px;
+    margin-bottom: 22px;
+  }
+
+  .content-body ul,
+  .content-body ol {
+    margin-left: 1.1rem;
+    padding-left: 0.9rem;
+  }
+
+  .content-body li {
+    margin-bottom: 0.2rem;
+  }
 }
 
 /* Enllaços dins de caixes de components: consistents amb breadcrumb */

@@ -14,3 +14,14 @@ body {
   padding: 20px;
 }
 
+@media (max-width: 900px) {
+  body {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 14px;
+  }
+}
