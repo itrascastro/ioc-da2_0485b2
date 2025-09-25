@@ -105,7 +105,7 @@ function initializeOffcanvasNavigation() {
   const openNav = () => {
     body.classList.add('offcanvas-open');
     toggle.setAttribute('aria-expanded', 'true');
-     toggle.setAttribute('aria-label', 'Tanca la navegació');
+    toggle.setAttribute('aria-label', 'Tanca la navegació');
     nav.setAttribute('aria-hidden', 'false');
     backdrop.hidden = false;
     nav.focus({ preventScroll: true });
@@ -130,23 +130,11 @@ function initializeOffcanvasNavigation() {
 
   nav.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
-      if (window.matchMedia('(max-width: 768px)').matches) {
+      if (!link.classList.contains('offcanvas-static')) {
         closeNav();
       }
     });
   });
-
-  const mq = window.matchMedia('(max-width: 768px)');
-  const handleChange = () => {
-    if (!mq.matches) {
-      closeNav();
-    }
-  };
-  if (typeof mq.addEventListener === 'function') {
-    mq.addEventListener('change', handleChange);
-  } else if (typeof mq.addListener === 'function') {
-    mq.addListener(handleChange);
-  }
 }
 
 function initializeFooterCollapse() {
@@ -209,6 +197,19 @@ function initializeFooterCollapse() {
   }
 }
 
+function initializeResponsiveTables() {
+  const tables = Array.from(document.querySelectorAll('.content-body table'));
+  if (!tables.length) return;
+
+  tables.forEach(table => {
+    if (table.closest('.table-responsive')) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'table-responsive';
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  });
+}
+
 // Tema fosc/clar + tema Prism
 function initializeThemeToggle() {
   const themeToggle = document.getElementById('theme-toggle');
@@ -245,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initializeSidebarToggle();
   initializeOffcanvasNavigation();
   initializeFooterCollapse();
+  initializeResponsiveTables();
   initializeFooterProgress();
   initializePromptCopy();
   initializeTocActive();
