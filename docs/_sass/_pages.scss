@@ -93,7 +93,7 @@
 .course-index {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 20px 40px;
+  padding: 20px 16px 32px;
   width: 100%;
 }
 
@@ -258,42 +258,42 @@
 
 @media (max-width: 768px) {
   .course-index {
-    padding: 18px 14px 32px;
+    padding: 16px 12px 28px;
   }
 
   .course-content {
-    gap: 26px;
+    gap: 22px;
   }
 
   .unit-header {
-    padding: 20px 18px;
+    padding: 16px 12px;
   }
 
   .unit-title {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     gap: 8px;
   }
 
   .unit-number {
-    font-size: 0.78rem;
-    padding: 4px 10px;
+    font-size: 0.76rem;
+    padding: 4px 9px;
   }
 
   .blocks-container {
-    padding: 18px 16px 20px;
+    padding: 16px 12px 18px;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
   }
 
   .block-link {
-    padding: 18px;
+    padding: 16px;
   }
 
   .block-title {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 
   .block-description {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
   }
 }

@@ -11,17 +11,17 @@ body {
   color: var(--color-text);
   background-color: var(--color-background);
   transition: all 0.3s ease;
-  padding: 20px;
+  padding: 18px;
 }
 
 @media (max-width: 900px) {
   body {
-    padding: 18px;
+    padding: 12px;
   }
 }
 
 @media (max-width: 768px) {
   body {
-    padding: 14px;
+    padding: 8px;
   }
 }

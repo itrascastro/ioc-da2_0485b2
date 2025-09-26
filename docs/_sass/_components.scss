@@ -1,5 +1,5 @@
 /* Seccions */
-.section { background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--border-radius); padding: 30px; margin-bottom: 30px; box-shadow: var(--shadow-light); }
+.section { background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--border-radius); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-light); }
 /* Primera secció: reduir espai superior */
 .content-body .section:first-of-type { margin-top: 0; padding-top: 15px; }
 
@@ -102,6 +102,11 @@
 }
 
 @media (max-width: 768px) {
+  .section {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
   .content-body .section > h2 {
     padding-right: 56px;
   }
@@ -137,8 +142,8 @@
 
 @media (max-width: 768px) {
   .section {
-    padding: 20px;
-    margin-bottom: 22px;
+    padding: 12px;
+    margin-bottom: 16px;
   }
 
   .content-body ul,
